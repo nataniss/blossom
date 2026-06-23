@@ -82,23 +82,21 @@ async function blossom() {
     let preferred_connection;
 
     if (!fs.existsSync("./blossom_auth_info")) {
-        (async () => {
-            preferred_connection = await select({
-                message: 'What connection method do you want to use?',
-                choices: [
-                    {
-                        name: language.qr,
-                        value: 'qr',
-                        description: language.qr_setup_info,
-                    },
-                    {
-                        name: language.pairing,
-                        value: 'pairing-code',
-                        description: language.pairing_setup_info,
-                    }
-                ],
-            });
-        })();
+        preferred_connection = await select({
+            message: 'What connection method do you want to use?',
+            choices: [
+                {
+                    name: language.qr,
+                    value: 'qr',
+                    description: language.qr_setup_info
+                },
+                {
+                    name: language.pairing,
+                    value: 'pairing-code',
+                    description: language.pairing_setup_info
+                }
+            ]
+        });
     }
 
     const { state, saveCreds } = await useMultiFileAuthState('blossom_auth_info');
@@ -113,28 +111,30 @@ async function blossom() {
     });
 
     if (
-        preferred_connection === 'pairing-code' && !state.creds.registered
+        preferred_connection === 'pairing-code'
+        && !state.creds.registered
     ) {
-        (async () => {
-            const phone_number = await input({
-                message: language.pairing_code_needs_number,
+        const phone_number = await input({
+            message: language.pairing_code_needs_number,
 
-                validate: (value) => {
-                    return /^\d+$/.test(value)
-                        || language.pairing_code_notice;
-                }
-            });
+            validate: value =>
+                /^\d+$/.test(value)
+                || language.pairing_code_notice
+        });
 
-            const code = await sock.requestPairingCode(phone_number);
+        const code = await sock.requestPairingCode(phone_number);
 
-
-            console.log(language.pair, chalk.bold(code.slice(0, 4) + "-" + code.slice(4)));
-        })();
+        console.log(
+            language.pair,
+            chalk.bold(
+                code.slice(0, 4) + "-" + code.slice(4)
+            )
+        );
     }
 
     sock.ev.on('creds.update', saveCreds);
 
-    sock.ev.on('connection.update', (update) => {
+    sock.ev.on('connection.update',  async (update) => {
         const { connection, lastDisconnect, qr } = update;
 
         if (connection === 'open') {
@@ -150,10 +150,8 @@ async function blossom() {
             }
 
             if (shouldReconnect) {
-                (async () => {
-                    await sock.end();
-                    return blossom();
-                })();
+                await sock.end();
+                return blossom();
             } else {
                 console.log(language.closed);
                 (async () => {
@@ -166,9 +164,7 @@ async function blossom() {
         if (preferred_connection === "qr") {
             if (qr) {
                 console.log(language.scan_qr);
-                (async () => {
-                    await qrcode.generate(qr, { small: true });
-                })();
+                qrcode.generate(qr, { small: true });
             }
         }
     });
