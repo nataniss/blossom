@@ -1,3 +1,5 @@
 blossom_auth_info/*
 
 node_modules/*
+
+./bot_config.json
