@@ -1,0 +1,11 @@
+{
+    "language": "English",
+    "bot_name": "Blossom Bot",
+    "bot_version": "1.0",
+    "connected_to_wa": "Connected to Whatsapp!",
+    "reconnecting": "Reconnecting...",
+    "failed_to_connect": "Failed to connect to Whatsapp. Error: ",
+    "scan_qr": "Scan the QR Code to connect the bot to your account:",
+    "closed": "Connection lost. You're logged out.",
+    "success_restart": "Connection appears to sucessful; Initializing..."
+}
