@@ -229,23 +229,36 @@ async function blossom() {
 
             if (!text.startsWith(configuration.default_prefix)) return;
 
-            const message_without_prefix = text.slice(1);
+            const message_without_prefix =
+                text.slice(configuration.default_prefix.length);
 
-            const args = message_without_prefix.split(" ")
+            const args = message_without_prefix.trim().split(/\s+/);
 
-            const cmd = args[0];
+            const cmd = args.shift().toLowerCase();
 
             const from = msg.key.remoteJid;
 
-            let type = Object.keys(msg.message)[0];
+            let msg_type = Object.keys(msg.message)[0];
 
 
-            msg = {msg, blossom: {cmd, args, text, username: msg.pushName, timestamp: msg.messageTimestamp, type}}
+            const ctx = {
+                sock,
+                from,
+                msg,
+                blossom: {
+                    cmd,
+                    args,
+                    text,
+                    username: msg.pushName,
+                    timestamp: msg.messageTimestamp,
+                    type: msg_type
+                }
+            };
 
             if (commands[cmd]) {
                 const command_path = commands[cmd];
                 const command = require(command_path);
-                await command.run(sock, from, msg);
+                await command.run(ctx);
             } else {
                 console.log("Cmd not found!");
             }
