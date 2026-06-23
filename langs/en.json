@@ -4,7 +4,7 @@
     "bot_version": "1.0",
     "connected_to_wa": "Connected to Whatsapp!",
     "reconnecting": "Reconnecting...",
-    "failed_to_connect": "Failed to connect to Whatsapp. Error: ",
+    "failed_to_connect": "Failed to connect to Whatsapp. Error:",
     "scan_qr": "Scan the QR Code to connect the bot to your account:",
     "closed": "Connection lost. You're logged out.",
     "success_restart": "Connection appears to sucessful; Initializing...",
@@ -12,7 +12,7 @@
     "pairing": "Pairing code",
     "qr_setup_info": "Creates a QR Code for you to scan inside the WhatsApp client. Generally faster, but requires a device to run this bot and another to scan the code.",
     "pairing_setup_info": "Creates an 8-digit code for you to manually type inside the WhatsApp client. Slower and requires your phone number, but does not require another device.",
-    "pairing_code_needs_number": "To use the pairing code, you'll need to type your Whatsapp number below. The number must have no spaces, hyphens, or a leading + sign (e.g., 12345678901).\n >",
+    "pairing_code_needs_number": "To use the pairing code, you'll need to type your Whatsapp number below. The number must have no spaces, hyphens, or a leading + sign. (e.g., 12345678901)\n >",
     "pairing_code_notice": "The number must have no spaces, hyphens, or a leading + sign! (e.g., 12345678901)",
     "pair": "Type this Pairing code to connect the bot to WhatsApp:"
 }

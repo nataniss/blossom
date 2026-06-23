@@ -1,0 +1,9 @@
+{
+    "package": "core_utils",
+    "commands": [
+        {
+            "file": "ping.js",
+            "aliases": ["ping"]
+        }
+    ]
+}

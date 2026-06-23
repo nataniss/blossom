@@ -12,6 +12,45 @@ const { select, input } = require('@inquirer/prompts');
 const fsp = require('node:fs/promises');
 const chalk = require('chalk');
 
+async function loadCommands() {
+    const command_folder = path.resolve(__dirname, 'commands');
+    const command_map = {};
+
+    try {
+        const items = await fsp.readdir(command_folder, { withFileTypes: true });
+
+        const subs = items.filter(item => item.isDirectory());
+
+        for (const sub of subs) {
+            const manifest_path = path.join(command_folder, sub.name, 'manifest.json');
+
+            try {
+                const manifest_data = await fsp.readFile(manifest_path, 'utf8');
+                const manifest = JSON.parse(manifest_data);
+
+                if (manifest && Array.isArray(manifest.commands)) {
+                    for (const cmd of manifest.commands) {
+                        const js_path = path.resolve(command_folder, sub.name, cmd.file);
+
+                        if (Array.isArray(cmd.aliases)) {
+                            for (const alias of cmd.aliases) {
+                                command_map[alias.toLowerCase()] = js_path;
+                            }
+                        }
+                    }
+                }
+            } catch (manifest_error) {
+                console.warn(`${manifest_path} failed:`, manifest_error.message);
+            }
+        }
+    } catch (dir_error) {
+        console.error(dir_error.message);
+    }
+
+    return command_map;
+}
+
+
 async function makeConfig() {
     let languages_input;
     const lang_files = fs.readdirSync("./langs", 'utf-8');
@@ -37,7 +76,8 @@ async function makeConfig() {
     });
 
     const config = {
-        language: language_chosen
+        language: language_chosen,
+        default_prefix: "!"
     }
 
     fs.writeFileSync(
@@ -52,6 +92,10 @@ async function makeConfig() {
 async function blossom() {
 
     let configuration;
+
+    let commands = await loadCommands();
+
+    console.log(commands)
 
     try {
         const data = await fsp.readFile(
@@ -134,7 +178,7 @@ async function blossom() {
 
     sock.ev.on('creds.update', saveCreds);
 
-    sock.ev.on('connection.update',  async (update) => {
+    sock.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect, qr } = update;
 
         if (connection === 'open') {
@@ -144,7 +188,7 @@ async function blossom() {
         else if (connection === 'close') {
             const shouldReconnect = (lastDisconnect?.error)?.output?.statusCode !== DisconnectReason.loggedOut;
             if ((lastDisconnect?.error)?.output?.statusCode == 515) {
-                console.log(language.success_restart)
+                console.log(chalk.bold(language.success_restart))
             } else {
                 console.log(language.failed_to_connect, lastDisconnect?.error, (shouldReconnect) ? language.reconnecting : "");
             }
@@ -170,8 +214,42 @@ async function blossom() {
     });
 
 
-    sock.ev.on('messages.upsert', ({ messages }) => {
-        console.log('Received message object:', JSON.stringify(messages, null, 2));
+    sock.ev.on('messages.upsert', async ({ messages, type }) => {
+        if (type !== 'notify') return;
+
+        let msg = messages[0];
+        
+        if (!msg.message) return;
+
+            const text = msg.message.conversation ||
+                msg.message.extendedTextMessage?.text ||
+                msg.message.imageMessage?.caption ||
+                msg.message.videoMessage?.caption ||
+                "";
+
+            if (!text.startsWith(configuration.default_prefix)) return;
+
+            const message_without_prefix = text.slice(1);
+
+            const args = message_without_prefix.split(" ")
+
+            const cmd = args[0];
+
+            const from = msg.key.remoteJid;
+
+            let type = Object.keys(msg.message)[0];
+
+
+            msg = {msg, blossom: {cmd, args, text, username: msg.pushName, timestamp: msg.messageTimestamp, type}}
+
+            if (commands[cmd]) {
+                const command_path = commands[cmd];
+                const command = require(command_path);
+                await command.run(sock, from, msg);
+            } else {
+                console.log("Cmd not found!");
+            }
+        
     });
 }
 
