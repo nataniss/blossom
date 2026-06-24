@@ -140,7 +140,7 @@ async function blossom() {
 
     if (!fs.existsSync("./blossom_auth_info")) {
         preferred_connection = await select({
-            message: 'What connection method do you want to use?',
+            message: language.connection_method_ask,
             choices: [
                 {
                     name: language.qr,
@@ -187,11 +187,11 @@ async function blossom() {
 
         const code = await sock.requestPairingCode(phone_number);
 
-        console.log(
-            language.pair,
-            chalk.rgb(255, 200, 167)(
+        console.log(chalk.rgb(255, 174, 0)("\n[◎]"),
+            chalk.rgb(255, 220, 167)(language.pair),
+            chalk.rgb(255, 220, 167)(
                 code.slice(0, 4) + "-" + code.slice(4)
-            )
+            ), "\n"
         );
     }
 
@@ -241,7 +241,7 @@ async function blossom() {
 
         if (preferred_connection === "qr") {
             if (qr) {
-                console.log(language.scan_qr);
+                console.log(chalk.rgb(255, 174, 0)("\n[◎]"), chalk.rgb(255, 220, 167)(language.scan_qr));
                 qrcode.generate(qr, { small: true });
             }
         }
