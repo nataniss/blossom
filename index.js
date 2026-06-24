@@ -91,7 +91,7 @@ async function makeConfig() {
     return config;
 }
 
-console.log(chalk.rgb(255, 180, 255)('[㋡]'),chalk.rgb(255, 225, 255)('Blossom Bot v1.0'),"\n")
+console.log(chalk.rgb(255, 180, 255)('─ [㋡]'), chalk.rgb(255, 225, 255)('Blossom Bot v1.0'), "\n")
 
 let connection_tries = 0;
 
@@ -138,7 +138,7 @@ async function blossom() {
 
     let preferred_connection;
 
-    if (!fs.existsSync("./blossom_auth_info")) {
+    if (!fs.existsSync("./blossom_auth_info/creds.json")) {
         preferred_connection = await select({
             message: language.connection_method_ask,
             choices: [
@@ -155,7 +155,7 @@ async function blossom() {
             ]
         });
     } else {
-        if (shouldSendSessionFoundMessage) {   
+        if (shouldSendSessionFoundMessage) {
             console.log(chalk.rgb(0, 255, 0)("╭ [♦]"), chalk.rgb(167, 255, 167)(language.connecting));
         } else {
             shouldSendSessionFoundMessage = true
@@ -206,21 +206,28 @@ async function blossom() {
         }
 
         else if (connection === 'close') {
-            
+
             const shouldReconnect = (lastDisconnect?.error)?.output?.statusCode !== DisconnectReason.loggedOut;
             if ((lastDisconnect?.error)?.output?.statusCode == 515) {
                 console.log(chalk.rgb(0, 255, 0)("╭ [✓]"), chalk.rgb(167, 255, 167)(language.success_restart));
                 shouldSendSessionFoundMessage = false
             } else {
-                if (connection_tries > 2) {
+                if (connection_tries >= 3) {
+
                     console.log(chalk.rgb(255, 8, 0)("╰ [×]"), chalk.rgb(255, 167, 167)(language.tries_exceeded), "\n");
-                    (async () => {
-                        await fsp.rm("./blossom_auth_info", { recursive: true, force: true });
-                    })();
+
+                    await sock.end();
+
+                    await fsp.rm("./blossom_auth_info", {
+                        recursive: true,
+                        force: true
+                    });
+
                     connection_tries = 0;
-                    
+
+                    return blossom();
                 } else {
-                    console.log(chalk.rgb(255, 8, 0)((connected) ? "\n  [×]" : "╰" + " [×]"), chalk.rgb(255, 167, 167)(language.failed_to_connect, (shouldReconnect) ? language.reconnecting : ""), "\n");
+                    console.log(chalk.rgb(255, 8, 0)((connected) ? "\n─ [×]" : "╰" + " [×]"), chalk.rgb(255, 167, 167)(language.failed_to_connect, (shouldReconnect) ? language.reconnecting : ""), "\n");
                     connected = false
                     connection_tries++;
                 }
