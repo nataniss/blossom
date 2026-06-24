@@ -6,8 +6,6 @@ async function run(ctx) {
         { text: "Pong! Command has been received." },
         { quoted: msg }
     );
-
-    console.log(ctx.blossom.cmd);
 }
 
 module.exports = { run };

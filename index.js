@@ -12,6 +12,8 @@ const { select, input } = require('@inquirer/prompts');
 const fsp = require('node:fs/promises');
 const chalk = require('chalk');
 
+const GROUP_CACHE = new Map();
+
 async function loadCommands() {
     const command_folder = path.resolve(__dirname, 'commands');
     const command_map = {};
@@ -89,13 +91,24 @@ async function makeConfig() {
     return config;
 }
 
+console.log(chalk.rgb(255, 180, 255)('[㋡]'),chalk.rgb(255, 225, 255)('Blossom Bot v1.0'),"\n")
+
+let connection_tries = 0;
+
+let shouldSendSessionFoundMessage = true;
+
+let connected = false;
+
+//console.log()
+
 async function blossom() {
 
     let configuration;
 
-    let commands = await loadCommands();
 
-    console.log(commands)
+    await fsp.mkdir("./database/", { recursive: true });
+
+    let commands = await loadCommands();
 
     try {
         const data = await fsp.readFile(
@@ -141,6 +154,12 @@ async function blossom() {
                 }
             ]
         });
+    } else {
+        if (shouldSendSessionFoundMessage) {   
+            console.log(chalk.rgb(0, 255, 0)("╭ [♦]"), chalk.rgb(167, 255, 167)(language.connecting));
+        } else {
+            shouldSendSessionFoundMessage = true
+        }
     }
 
     const { state, saveCreds } = await useMultiFileAuthState('blossom_auth_info');
@@ -170,7 +189,7 @@ async function blossom() {
 
         console.log(
             language.pair,
-            chalk.bold(
+            chalk.rgb(255, 200, 167)(
                 code.slice(0, 4) + "-" + code.slice(4)
             )
         );
@@ -182,25 +201,40 @@ async function blossom() {
         const { connection, lastDisconnect, qr } = update;
 
         if (connection === 'open') {
-            console.log(language.connected_to_wa);
+            console.log(chalk.rgb(0, 255, 0)("╰ [✓]"), chalk.rgb(167, 255, 167)(language.connected_to_wa));
+            connected = true;
         }
 
         else if (connection === 'close') {
+            
             const shouldReconnect = (lastDisconnect?.error)?.output?.statusCode !== DisconnectReason.loggedOut;
             if ((lastDisconnect?.error)?.output?.statusCode == 515) {
-                console.log(chalk.bold(language.success_restart))
+                console.log(chalk.rgb(0, 255, 0)("╭ [✓]"), chalk.rgb(167, 255, 167)(language.success_restart));
+                shouldSendSessionFoundMessage = false
             } else {
-                console.log(language.failed_to_connect, lastDisconnect?.error, (shouldReconnect) ? language.reconnecting : "");
+                if (connection_tries > 2) {
+                    console.log(chalk.rgb(255, 8, 0)("╰ [×]"), chalk.rgb(255, 167, 167)(language.tries_exceeded), "\n");
+                    (async () => {
+                        await fsp.rm("./blossom_auth_info", { recursive: true, force: true });
+                    })();
+                    connection_tries = 0;
+                    
+                } else {
+                    console.log(chalk.rgb(255, 8, 0)((connected) ? "\n  [×]" : "╰" + " [×]"), chalk.rgb(255, 167, 167)(language.failed_to_connect, (shouldReconnect) ? language.reconnecting : ""), "\n");
+                    connected = false
+                    connection_tries++;
+                }
             }
 
             if (shouldReconnect) {
                 await sock.end();
                 return blossom();
             } else {
-                console.log(language.closed);
+                console.log(chalk.rgb(255, 0, 0)("╭ [×]"), chalk.rgb(255, 167, 167)(language.closed));
                 (async () => {
                     await fsp.rm("./blossom_auth_info", { recursive: true, force: true });
                 })();
+                console.log(chalk.rgb(255, 8, 0)("╰ [×]"), chalk.rgb(255, 167, 167)(language.new_session), "\n");
                 blossom();
             }
         }
@@ -218,51 +252,84 @@ async function blossom() {
         if (type !== 'notify') return;
 
         let msg = messages[0];
-        
+
+        const from = msg.key.remoteJid;
+
         if (!msg.message) return;
 
-            const text = msg.message.conversation ||
-                msg.message.extendedTextMessage?.text ||
-                msg.message.imageMessage?.caption ||
-                msg.message.videoMessage?.caption ||
-                "";
+        const text = msg.message.conversation ||
+            msg.message.extendedTextMessage?.text ||
+            msg.message.imageMessage?.caption ||
+            msg.message.videoMessage?.caption ||
+            "";
 
-            if (!text.startsWith(configuration.default_prefix)) return;
+        const isGroup = from.endsWith('@g.us');
+        let senderNumber = "";
+        let participants = [];
+        const lid = msg.key.participant || msg.key.remoteJid;
+        const now = Date.now();
+        const cachedData = GROUP_CACHE.get(from);
 
-            const message_without_prefix =
-                text.slice(configuration.default_prefix.length);
-
-            const args = message_without_prefix.trim().split(/\s+/);
-
-            const cmd = args.shift().toLowerCase();
-
-            const from = msg.key.remoteJid;
-
-            let msg_type = Object.keys(msg.message)[0];
-
-
-            const ctx = {
-                sock,
-                from,
-                msg,
-                blossom: {
-                    cmd,
-                    args,
-                    text,
-                    username: msg.pushName,
-                    timestamp: msg.messageTimestamp,
-                    type: msg_type
-                }
-            };
-
-            if (commands[cmd]) {
-                const command_path = commands[cmd];
-                const command = require(command_path);
-                await command.run(ctx);
+        if (isGroup) {
+            if (cachedData && (now - cachedData.timestamp) < (1000 * 60 * 10)) {
+                participants = cachedData.participants;
             } else {
-                console.log("Cmd not found!");
+                try {
+                    const metadata = await sock.groupMetadata(from);
+                    participants = metadata.participants;
+                    GROUP_CACHE.set(from, {
+                        participants: participants,
+                        timestamp: now
+                    });
+                } catch (e) {
+                    console.error("Error checking group metadata:", e);
+                    if (cachedData) {
+                        participants = cachedData.participants;
+                    } else {
+                        return;
+                    }
+                }
             }
-        
+
+            const match = participants.find(p => p.id === lid);
+            if (match && match.phoneNumber) {
+                senderNumber = match.phoneNumber.split('@')[0];
+            }
+        } else {
+            return
+        }
+
+        if (!text.startsWith(configuration.default_prefix)) return;
+
+        const message_without_prefix =
+            text.slice(configuration.default_prefix.length);
+
+        const args = message_without_prefix.trim().split(/\s+/);
+        const cmd = args.shift().toLowerCase();
+        let msg_type = Object.keys(msg.message)[0];
+
+        const ctx = {
+            sock,
+            from,
+            msg,
+            cmd,
+            args,
+            text,
+            username: msg.pushName,
+            timestamp: msg.messageTimestamp,
+            type: msg_type,
+            senderNumber,
+            participants
+        };
+
+        if (commands[cmd]) {
+            const command_path = commands[cmd];
+            const command = require(command_path);
+            await command.run(ctx);
+        } else {
+            console.log("Cmd not found!");
+        }
+
     });
 }
 
