@@ -11,8 +11,46 @@ const qrcode = require('qrcode-terminal');
 const { select, input } = require('@inquirer/prompts');
 const fsp = require('node:fs/promises');
 const chalk = require('chalk');
+const util = require('util');
 
 const GROUP_CACHE = new Map();
+
+async function runCommand(commandPath, ctx, language) {
+    try {
+
+        delete require.cache[require.resolve(commandPath)];
+
+        const command = require(commandPath);
+
+        if (!command.run) {
+            throw new Error(language.no_run);
+            
+        }
+
+        await Promise.resolve(command.run(ctx));
+
+    } catch (err) {
+
+        const log_stack = err.stack
+        .split('\n')
+        .map(line => chalk.rgb(255, 8, 0)("├ ") + chalk.rgb(255, 167, 167)(line))
+        .join('\n');
+
+        console.log(chalk.rgb(255, 8, 0)("\n╭ [×]"), chalk.rgb(255, 167, 167)(util.format(language.failed_to_run_terminal, ctx.cmd)));
+        console.log(chalk.rgb(255, 8, 0)("│ "))
+        console.log(log_stack)
+        console.log(chalk.rgb(255, 8, 0)("│ "))
+        console.log(chalk.rgb(255, 8, 0)("╰ "))
+
+        
+        try {
+            await ctx.sock.sendMessage(ctx.from, {
+                text: util.format(language.failed_to_run, ctx.cmd, err.message)
+            }, { quoted: ctx.msg });
+        } catch (_) {}
+    
+    }
+}
 
 async function loadCommands() {
     const command_folder = path.resolve(__dirname, 'commands');
@@ -99,8 +137,6 @@ let shouldSendSessionFoundMessage = true;
 
 let connected = false;
 
-//console.log()
-
 async function blossom() {
 
     let configuration;
@@ -156,7 +192,7 @@ async function blossom() {
         });
     } else {
         if (shouldSendSessionFoundMessage) {
-            console.log(chalk.rgb(0, 255, 0)("╭ [♦]"), chalk.rgb(167, 255, 167)(language.connecting));
+            console.log(chalk.rgb(0, 255, 0)("╭ [✓]"), chalk.rgb(167, 255, 167)(language.connecting));
         } else {
             shouldSendSessionFoundMessage = true
         }
@@ -187,7 +223,7 @@ async function blossom() {
 
         const code = await sock.requestPairingCode(phone_number);
 
-        console.log(chalk.rgb(255, 174, 0)("\n[◎]"),
+        console.log(chalk.rgb(255, 174, 0)("\n─ [◎]"),
             chalk.rgb(255, 220, 167)(language.pair),
             chalk.rgb(255, 220, 167)(
                 code.slice(0, 4) + "-" + code.slice(4)
@@ -248,7 +284,7 @@ async function blossom() {
 
         if (preferred_connection === "qr") {
             if (qr) {
-                console.log(chalk.rgb(255, 174, 0)("\n[◎]"), chalk.rgb(255, 220, 167)(language.scan_qr));
+                console.log(chalk.rgb(255, 174, 0)("\n─ [◎]"), chalk.rgb(255, 220, 167)(language.scan_qr));
                 qrcode.generate(qr, { small: true });
             }
         }
@@ -326,13 +362,12 @@ async function blossom() {
             timestamp: msg.messageTimestamp,
             type: msg_type,
             senderNumber,
-            participants
+            participants,
+            language
         };
 
         if (commands[cmd]) {
-            const command_path = commands[cmd];
-            const command = require(command_path);
-            await command.run(ctx);
+            await runCommand(commands[cmd], ctx, language);
         } else {
             console.log("Cmd not found!");
         }

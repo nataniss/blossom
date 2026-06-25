@@ -20,5 +20,7 @@
     "new_session": "A new session was made. Connect it to it.",
     "try": "Try",
     "tries_exceeded": "Tried three times, but failed to connect on all of them. Deleting your session folder...",
-    "connection_method_ask": "What connection method do you want to use?"
+    "connection_method_ask": "What connection method do you want to use?",
+    "failed_to_run_terminal": "Failed to run command %s. Check the error stack below.",
+    "failed_to_run": "Failed to run command %s.\nReason: %s\nFor a more detailed debugging, check the terminal where the bot is running!"
 }
