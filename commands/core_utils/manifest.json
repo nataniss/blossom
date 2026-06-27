@@ -4,6 +4,10 @@
         {
             "file": "ping.js",
             "aliases": ["ping"]
+        },
+        {
+            "file": "help.js",
+            "aliases": ["help", "ajuda"]
         }
     ]
 }

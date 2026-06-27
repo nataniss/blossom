@@ -44,6 +44,12 @@
         "average": "Normal",
         "fast": "Rápido",
         "slow": "Lento",
-        "extremely_slow": "Muito lento"
+        "extremely_slow": "Muito lento",
+        "help": "|ping é um comando usado para testar o tempo de resposta do bot e a sua conectividade aos servidores do Whatsapp. Ele serve como uma análise de \"você está vivo?\".\nEle te responde com a *latência* e a *Velocidade da transmissão*. Latência significa o tempo que o bot levou para receber a mensagem, e a velocidade da transmissão significa o tempo que demorou para construir e enviar uma mensagem."
+    },
+    "help": {
+        "no_help": "Este comando não tem uma página de ajuda.\nBem, pelo menos por enquanto :)",
+        "no_help_no_exist": "Este comando não tem uma página de ajuda pois o comando não existe.",
+        "help": "| é um comando usado para obter informações úteis sobre um comando, como usá-lo, dicas e truques, e mais.\n\nUso:\n> ```|ajuda <nome do comando>```"
     }
 }
