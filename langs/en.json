@@ -23,6 +23,16 @@
     "connection_method_ask": "What connection method do you want to use?",
     "failed_to_run_terminal": "Failed to run command %s. Check the error stack below.",
     "failed_to_run": "Failed to run command %s.\nReason: %s\nFor a more detailed debugging, check the terminal where the bot is running!",
+    "error": "Error",
+    "command_not_found": "Not found",
+    "not_found": {
+        "good_morning": "Good morning, %s.",
+        "good_afternoon": "Good afternon, %s.",
+        "good_night": "Good night, %s.",
+        "doesnt_exist": "The command *%s* doesn't exist.",
+        "to_see_all_commands": "See all comands with *%s*.",
+        "did_you_mean": "Maybe did you mean _*%s*_?"
+    },
     "ping": {
         "good_morning": "Good morning, %s!",
         "good_afternoon": "Good afternon, %s!",

@@ -151,6 +151,8 @@ let shouldSendSessionFoundMessage = true;
 
 let connected = false;
 
+let commands;
+
 async function blossom() {
 
     let configuration;
@@ -158,7 +160,7 @@ async function blossom() {
 
     await fsp.mkdir("./database/", { recursive: true });
 
-    let commands = await loadCommands();
+    commands = await loadCommands();
 
     try {
         const data = await fsp.readFile(
@@ -377,16 +379,21 @@ async function blossom() {
             type: msg_type,
             senderNumber,
             participants,
-            language
+            language,
+            prefix: configuration.default_prefix
         };
 
         if (commands[cmd]) {
             await runCommand(commands[cmd], ctx, language);
         } else {
-            console.log("Cmd not found!");
+            await runCommand(path.resolve("./helpers/command_not_found"), ctx, language);
         }
 
     });
 }
 
 blossom();
+
+module.exports = {
+    loadCommands
+}

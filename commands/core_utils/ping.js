@@ -43,12 +43,12 @@ async function run(ctx) {
 
     let greeting = ""
 
-    if (currentHour >= 6 || currentHour <= 12) {
-        greeting = greetings[0]
-    } else if (currentHour > 12 || currentHour <= 18) {
-        greeting = greetings[1]
+    if (currentHour >= 6 && currentHour < 12) {
+        greeting = greetings[0];
+    } else if (currentHour >= 12 && currentHour < 18) {
+        greeting = greetings[1];
     } else {
-        greeting = greetings[2]
+        greeting = greetings[2];
     }
 
     greeting = util.format(greeting, "@" + ctx.senderNumber)
