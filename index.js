@@ -117,7 +117,8 @@ async function makeConfig() {
 
     const config = {
         language: language_chosen,
-        default_prefix: "!"
+        default_prefix: "!",
+        style: "blossom_default"
     }
 
     fs.writeFileSync(

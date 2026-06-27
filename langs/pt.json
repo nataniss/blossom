@@ -19,7 +19,7 @@
     "connecting": "Uma sessão foi encontrada. Conectando-se...",
     "new_session": "Uma nova sessão foi gerada. Conecte-se a ela.",
     "try": "Tentativa",
-    "tries_exceeded": "Foram feitas três tentaivas, mas a conexão falhou em todas as três. Apagando sua pasta de sessão...",
+    "tries_exceeded": "Foram feitas três tentativas, mas a conexão falhou em todas as três. Apagando sua pasta de sessão...",
     "connection_method_ask": "Qual tipo de conexão você deseja usar?",
     "failed_to_run_terminal": "Falha ao executar o comando %s. Veja a pilha de erros abaixo.",
     "failed_to_run": "Falha ao executar o comando %s.\nMotivo: %s\nPara uma análise mais detalhada, veja o terminal onde o bot está rodando!"

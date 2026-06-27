@@ -2,6 +2,10 @@ blossom_auth_info/*
 
 node_modules/*
 
-./bot_config.json
+bot_config.json
 
 database/*
+
+helpers/decorator_current_style/*
+
+!helpers/decorator_current_style/.gitkeep

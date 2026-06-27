@@ -1,0 +1,12 @@
+{
+    "styles": {
+        "title": "✮⋆˙ [emoji] | [title] ˙⋆✮",
+        "text": " ╰┈➤ [text]",
+        "body_start": "❀° ┄──────╮",
+        "body_title": "❀° [text] ┄──────╮",
+        "body_empty": "┆",
+        "body_text": "┆   ╰┈➤ [text]",
+        "body_end": "╰──────┄ °❀",
+        "footer": "✮⋆˙ 𝓫𝓵𝓸𝓼𝓼𝓸𝓶ᵇᵒᵗ ˙⋆✮"
+    }
+}
