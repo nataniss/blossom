@@ -6,7 +6,9 @@
         "body_title": "❀° [text] ┄──────╮",
         "body_empty": "┆",
         "body_text": "┆ ⪼﹕ [text]",
-        "body_text_arrow": "┆   ╰┈➤﹕ [text]",
+        "body_text_complex": "┆ [emoji] ⁞ ⪼﹕ [text]",
+        "body_text_arrow": "┆    ╰┈➤﹕ [text]",
+        "body_text_arrow_complex": "┆ [emoji] ⁞    ╰┈➤﹕ [text]",
         "body_end": "╰──────┄ °❀",
         "footer": "✮⋆˙ 𝓫𝓵𝓸𝓼𝓼𝓸𝓶ᵇᵒᵗ ˙⋆✮"
     }

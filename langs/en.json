@@ -30,6 +30,10 @@
         "latency": "Latency:",
         "transmission_speed": "Transmission speed:",
         "bot_on_for": "Bot has been online for",
-        "calculating": "Calculating..."
+        "calculating": "Calculating...",
+        "average": "Average",
+        "fast": "Fast",
+        "slow": "Slow",
+        "extremely_slow": "Extremely slow"
     }
 }

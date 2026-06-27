@@ -41,6 +41,7 @@ async function decorate(info) {
 
             case "list":
             case "list_text":
+            case "list_complex":
                 lines.push(...renderBody(style, body));
                 break;
 
@@ -64,6 +65,35 @@ if (style.footer) {
 }
 
 return lines.join("\n");
+}
+
+function renderBodyItem(style, item, bodyType) {
+
+    if (typeof item === "string") {
+        return style.body_text.replaceAll("[text]", item);
+    }
+
+    switch (item.list_item_type) {
+
+        case "emoji_item":
+            return style.body_text_complex
+                .replaceAll("[emoji]", item.emoji)
+                .replaceAll("[text]", item.text);
+
+        case "emoji_arrow":
+            return style.body_text_arrow_complex
+                .replaceAll("[emoji]", item.emoji)
+                .replaceAll("[text]", item.text);
+
+        case "simple_arrow":
+            return style.body_text_arrow
+                .replaceAll("[text]", item.text);
+
+        case "simple_item":
+        default:
+            return style.body_text
+                .replaceAll("[text]", item.text);
+    }
 }
 
 function pad(lines, before = 0, after = 0) {
@@ -105,7 +135,7 @@ function renderBody(style, body) {
 
     for (const item of body.items ?? []) {
         out.push(
-            style.body_text.replaceAll("[text]", item)
+            renderBodyItem(style, item, body.type)
         );
     }
 
