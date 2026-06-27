@@ -22,5 +22,14 @@
     "tries_exceeded": "Tried three times, but failed to connect on all of them. Deleting your session folder...",
     "connection_method_ask": "What connection method do you want to use?",
     "failed_to_run_terminal": "Failed to run command %s. Check the error stack below.",
-    "failed_to_run": "Failed to run command %s.\nReason: %s\nFor a more detailed debugging, check the terminal where the bot is running!"
+    "failed_to_run": "Failed to run command %s.\nReason: %s\nFor a more detailed debugging, check the terminal where the bot is running!",
+    "ping": {
+        "good_morning": "Good morning, %s!",
+        "good_afternoon": "Good afternon, %s!",
+        "good_night": "Good night, %s!",
+        "latency": "Latency:",
+        "transmission_speed": "Transmission speed:",
+        "bot_on_for": "Bot has been online for",
+        "calculating": "Calculating..."
+    }
 }

@@ -15,6 +15,19 @@ const util = require('util');
 
 const GROUP_CACHE = new Map();
 
+const userArgs = process.argv.slice(2)
+
+if (userArgs.includes("--reset")) {
+    if (fs.existsSync("./blossom_auth_info/creds.json")) {
+        (async () => {
+        await fsp.rm("./blossom_auth_info", {
+            recursive: true,
+            force: true
+        });
+    })();
+    }
+}
+
 async function runCommand(commandPath, ctx, language) {
     try {
 

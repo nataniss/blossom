@@ -22,5 +22,14 @@
     "tries_exceeded": "Foram feitas três tentativas, mas a conexão falhou em todas as três. Apagando sua pasta de sessão...",
     "connection_method_ask": "Qual tipo de conexão você deseja usar?",
     "failed_to_run_terminal": "Falha ao executar o comando %s. Veja a pilha de erros abaixo.",
-    "failed_to_run": "Falha ao executar o comando %s.\nMotivo: %s\nPara uma análise mais detalhada, veja o terminal onde o bot está rodando!"
+    "failed_to_run": "Falha ao executar o comando %s.\nMotivo: %s\nPara uma análise mais detalhada, veja o terminal onde o bot está rodando!",
+    "ping": {
+        "good_morning": "Bom dia, %s!",
+        "good_afternoon": "Boa tarde, %s!",
+        "good_night": "Boa noite, %s!",
+        "latency": "Latência:",
+        "transmission_speed": "Velocidade da transmissão:",
+        "bot_on_for": "Bot se encontra online por",
+        "calculating": "Calculando..."
+    }
 }
