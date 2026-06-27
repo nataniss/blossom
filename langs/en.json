@@ -50,6 +50,6 @@
     "help": {
         "no_help": "This command doesn't have a help page.\nWell, not yet :)",
         "no_help_no_exist": "This command doesn't have a help page because it doesn't exist.",
-        "help": "|º is a command used to check useful information about a command, how to use it, tips and tricks, and more.\n\nUsage:\n> ```|helpæ <nome do comando>```"
+        "help": "*|help* is a command used to check useful information about a command. For example, you'll get info on how to use it, tips and tricks, and more.\n\nUsage:\n> ```|help <command name>```"
     }
 }

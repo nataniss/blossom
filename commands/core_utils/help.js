@@ -9,7 +9,6 @@ async function run(ctx) {
     if (language[ctx.args[0]]?.help) {
         help_content = language[ctx.args[0]].help
         help_content = help_content.replaceAll("|", ctx.prefix)
-        help_content = help_content.replaceAll("º", ctx.args[0])
     } else if (await Object.keys(loadCommands()).includes(ctx.args[0])) {
         await sock.sendMessage(
             from,
@@ -17,7 +16,7 @@ async function run(ctx) {
                 text: await decorate(
                     {
                         emoji: "💡",
-                        title: "ajuda",
+                        title: ctx.cmd,
                         content: [
                             {
                                 type: "text",
@@ -27,20 +26,19 @@ async function run(ctx) {
                             }
                         ]
                     }
-                ),
-                mentions: [ctx.senderNumber + "@s.whatsapp.net"]
+                )
             },
             { quoted: msg }
         );
         return
     } else {
-                await sock.sendMessage(
+        await sock.sendMessage(
             from,
             {
                 text: await decorate(
                     {
                         emoji: "💡",
-                        title: "ajuda",
+                        title: ctx.cmd,
                         content: [
                             {
                                 type: "text",
@@ -50,8 +48,7 @@ async function run(ctx) {
                             }
                         ]
                     }
-                ),
-                mentions: [ctx.senderNumber + "@s.whatsapp.net"]
+                )
             },
             { quoted: msg }
         );
@@ -64,7 +61,7 @@ async function run(ctx) {
             text: await decorate(
                 {
                     emoji: "💡",
-                    title: "ajuda",
+                    title: ctx.cmd,
                     content: [
                         {
                             type: "text",
@@ -74,8 +71,7 @@ async function run(ctx) {
                         }
                     ]
                 }
-            ),
-            mentions: [ctx.senderNumber + "@s.whatsapp.net"]
+            )
         },
         { quoted: msg }
     );

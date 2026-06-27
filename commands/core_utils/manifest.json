@@ -7,7 +7,7 @@
         },
         {
             "file": "help.js",
-            "aliases": ["help", "ajuda"]
+            "aliases": ["help"]
         }
     ]
 }

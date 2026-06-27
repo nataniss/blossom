@@ -50,6 +50,6 @@
     "help": {
         "no_help": "Este comando não tem uma página de ajuda.\nBem, pelo menos por enquanto :)",
         "no_help_no_exist": "Este comando não tem uma página de ajuda pois o comando não existe.",
-        "help": "| é um comando usado para obter informações úteis sobre um comando, como usá-lo, dicas e truques, e mais.\n\nUso:\n> ```|ajuda <nome do comando>```"
+        "help": "*|help* é um comando usado para obter informações úteis sobre um comando. Por exemplo, você receberá instruções de como usá-lo, dicas e truques, e mais.\n\nUso:\n> ```|ajuda <nome do comando>```"
     }
 }
