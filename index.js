@@ -20,11 +20,11 @@ const userArgs = process.argv.slice(2)
 if (userArgs.includes("--reset")) {
     if (fs.existsSync("./blossom_auth_info/creds.json")) {
         (async () => {
-        await fsp.rm("./blossom_auth_info", {
-            recursive: true,
-            force: true
-        });
-    })();
+            await fsp.rm("./blossom_auth_info", {
+                recursive: true,
+                force: true
+            });
+        })();
     }
 }
 
@@ -37,7 +37,7 @@ async function runCommand(commandPath, ctx, language) {
 
         if (!command.run) {
             throw new Error(language.no_run);
-            
+
         }
 
         await Promise.resolve(command.run(ctx));
@@ -45,9 +45,9 @@ async function runCommand(commandPath, ctx, language) {
     } catch (err) {
 
         const log_stack = err.stack
-        .split('\n')
-        .map(line => chalk.rgb(255, 8, 0)("├ ") + chalk.rgb(255, 167, 167)(line))
-        .join('\n');
+            .split('\n')
+            .map(line => chalk.rgb(255, 8, 0)("├ ") + chalk.rgb(255, 167, 167)(line))
+            .join('\n');
 
         console.log(chalk.rgb(255, 8, 0)("\n╭ [×]"), chalk.rgb(255, 167, 167)(util.format(language.failed_to_run_terminal, ctx.cmd)));
         console.log(chalk.rgb(255, 8, 0)("│ "))
@@ -55,13 +55,13 @@ async function runCommand(commandPath, ctx, language) {
         console.log(chalk.rgb(255, 8, 0)("│ "))
         console.log(chalk.rgb(255, 8, 0)("╰ "))
 
-        
+
         try {
             await ctx.sock.sendMessage(ctx.from, {
                 text: util.format(language.failed_to_run, ctx.cmd, err.message)
             }, { quoted: ctx.msg });
-        } catch (_) {}
-    
+        } catch (_) { }
+
     }
 }
 

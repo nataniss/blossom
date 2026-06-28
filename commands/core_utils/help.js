@@ -1,84 +1,82 @@
-const { decorate } = require("../../helpers/decorator.js")
-const { loadCommands } = require("../../index.js")
+const path = require("path");
+const { decorate } = require("../../helpers/decorator.js");
+const { loadCommands } = require("../../index.js");
 
 async function run(ctx) {
     const { sock, from, msg, language } = ctx;
+    const requestedCmd = ctx.args[0];
 
-    let help_content;
+    const CommandMap = await loadCommands();
+    let help_content = null;
 
-    if (language[ctx.args[0]]?.help) {
-        help_content = language[ctx.args[0]].help
-        help_content = help_content.replaceAll("|", ctx.prefix)
-    } else if (await Object.keys(loadCommands()).includes(ctx.args[0])) {
-        await sock.sendMessage(
-            from,
-            {
-                text: await decorate(
-                    {
-                        emoji: "💡",
-                        title: ctx.cmd,
-                        content: [
-                            {
-                                type: "text",
-                                items: [
-                                    `${language.help.no_help}`
-                                ]
-                            }
-                        ]
-                    }
-                )
-            },
-            { quoted: msg }
-        );
-        return
-    } else {
-        await sock.sendMessage(
-            from,
-            {
-                text: await decorate(
-                    {
-                        emoji: "💡",
-                        title: ctx.cmd,
-                        content: [
-                            {
-                                type: "text",
-                                items: [
-                                    `${language.help.no_help_no_exist}`
-                                ]
-                            }
-                        ]
-                    }
-                )
-            },
-            { quoted: msg }
-        );
-        return
+    if (CommandMap[requestedCmd]) {
+        const filePath = CommandMap[requestedCmd];
+        
+        const baseFileName = path.basename(filePath, ".js");
+
+        if (language[baseFileName]?.help) {
+            help_content = language[baseFileName].help.replaceAll("|", ctx.prefix);
+        }
     }
 
-    await sock.sendMessage(
-        from,
-        {
-            text: await decorate(
-                {
+    if (help_content) {
+        await sock.sendMessage(
+            from,
+            {
+                text: await decorate({
                     emoji: "💡",
                     title: ctx.cmd,
                     content: [
                         {
                             type: "text",
-                            items: [
-                                `${help_content}`
-                            ]
+                            items: [`${help_content}`]
                         }
                     ]
-                }
-            )
-        },
+                })
+            },
+            { quoted: msg }
+        );
+        return;
+    }
+
+    if (Object.keys(CommandMap).includes(requestedCmd)) {
+        await sock.sendMessage(
+            from,
+            {
+                text: await decorate({
+                    emoji: "💡",
+                    title: ctx.cmd,
+                    content: [
+                        {
+                            type: "text",
+                            items: [`${language.help.no_help}`]
+                        }
+                    ]
+                })
+            },
+            { quoted: msg }
+        );
+        return;
+    }
+
+    await sock.sendMessage(
+        from,
+        {
+            text: await decorate({
+                    emoji: "💡",
+                    title: ctx.cmd,
+                    content: [
+                        {
+                            type: "text",
+                            items: [`${language.help.no_help_no_exist}`]
+                        }
+                    ]
+                })
+            },
         { quoted: msg }
     );
 }
 
-
 module.exports = {
     run
-}
-
+};

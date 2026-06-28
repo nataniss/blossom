@@ -83,7 +83,17 @@ async function run(ctx) {
                                     emoji: "📡",
                                     text: `*${latency.toFixed(2)}s (${rateLatency(latency, language)})*`,
                                     list_item_type: "emoji_arrow"
-                                }
+                                },
+                                {
+                                    emoji: "📡",
+                                    text: `${language.ping.transmission_speed}`,
+                                    list_item_type: "emoji_item"
+                                },
+                                {
+                                    emoji: "📡",
+                                    text: `*${language.ping.calculating}*`,
+                                    list_item_type: "emoji_arrow"
+                                },
                             ]
                         }
                     ]
