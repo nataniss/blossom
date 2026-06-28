@@ -51,5 +51,17 @@
         "no_help": "Este comando não tem uma página de ajuda.\nBem, pelo menos por enquanto :)",
         "no_help_no_exist": "Este comando não tem uma página de ajuda pois o comando não existe.",
         "help": "*|help* é um comando usado para obter informações úteis sobre um comando. Por exemplo, você receberá instruções de como usá-lo, dicas e truques, e mais.\n\nUso:\n> ```|help <nome do comando>```"
+    },
+    "menu": {
+        "moderation": "Moderação",
+        "utilities": "Ferramentas",
+        "entertainment": "Brincadeiras",
+        "group": "Grupo",
+        "downloads": "Downloads",
+        "leveling": "Pontuações",
+        "see_by": "%smenu %s",
+        "categories_1": "Você está vendo categorias.",
+        "categories_2": "Para ver os comandos dentro de uma categoria, rode *\"%smenu <nome da categoria>\"*.",
+        "help": "*|menu* mostra todos os comandos do bot.\nSão separados em categorias, com cada categoria tendo sua própria lista de comandos disponíveis.\n\nUso:\n> ```|menu```\nMostra todas as categorias.\n\n> ```|menu <nome da categoria>```\nMostra todos os comandos dentro de uma categoria.\n\n> ```|menu --all```\nMostra *todos* os comandos de *todas* as categorias em *uma* mensagem."
     }
 }

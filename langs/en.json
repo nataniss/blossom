@@ -51,5 +51,17 @@
         "no_help": "This command doesn't have a help page.\nWell, not yet :)",
         "no_help_no_exist": "This command doesn't have a help page because it doesn't exist.",
         "help": "*|help* is a command used to check useful information about a command. For example, you'll get info on how to use it, tips and tricks, and more.\n\nUsage:\n> ```|help <command name>```"
+    },
+    "menu": {
+        "moderation": "Moderation",
+        "utilities": "Utilities",
+        "entertainment": "Entertainment",
+        "group": "Group",
+        "downloads": "Downloads",
+        "leveling": "Leveling",
+        "see_by": "%smenu %s",
+        "categories_1": "You're viewing categories.",
+        "categories_2": "To check the commands inside a category, run *\"%smenu <category name>\"*.",
+        "help": "*|menu* displays all commands of this bot.\nThey are separated in categories, with each category containing it's own list of available commands.\n\nUsage:\n> ```|menu```\nDisplays all categories.\n\n> ```|menu <category name>```\nDisplays all commands inside a category.\n\n> ```|menu --all```\nDisplays *all* commands in *all* categories in *one* message."
     }
 }

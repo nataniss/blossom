@@ -8,6 +8,10 @@
         {
             "file": "help.js",
             "aliases": ["help"]
+        },
+        {
+            "file": "menu.js",
+            "aliases": ["menu"]
         }
     ]
 }

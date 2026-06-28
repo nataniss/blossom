@@ -53,6 +53,10 @@ async function decorate(info) {
                 lines.push(...renderRaw(body));
                 break;
 
+            case "see_more":
+                lines.push("​".repeat(1024))
+                break;
+
             default:
                 throw new Error(`Unknown body type "${body.type}"`);
         }
