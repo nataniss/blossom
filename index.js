@@ -28,7 +28,7 @@ if (userArgs.includes("--reset")) {
     }
 }
 
-async function runCommand(commandPath, ctx, language) {
+async function runCommand(commandPath, ctx) {
     try {
 
         delete require.cache[require.resolve(commandPath)];
@@ -36,7 +36,7 @@ async function runCommand(commandPath, ctx, language) {
         const command = require(commandPath);
 
         if (!command.run) {
-            throw new Error(language.no_run);
+            throw new Error(getString("no_run"));
 
         }
 
@@ -49,7 +49,7 @@ async function runCommand(commandPath, ctx, language) {
             .map(line => chalk.rgb(255, 8, 0)("├ ") + chalk.rgb(255, 167, 167)(line))
             .join('\n');
 
-        console.log(chalk.rgb(255, 8, 0)("\n╭ [×]"), chalk.rgb(255, 167, 167)(util.format(language.failed_to_run_terminal, ctx.cmd)));
+        console.log(chalk.rgb(255, 8, 0)("\n╭ [×]"), chalk.rgb(255, 167, 167)(util.format(getString("failed_to_run_terminal"), ctx.cmd)));
         console.log(chalk.rgb(255, 8, 0)("│ "))
         console.log(log_stack)
         console.log(chalk.rgb(255, 8, 0)("│ "))
@@ -58,7 +58,7 @@ async function runCommand(commandPath, ctx, language) {
 
         try {
             await ctx.sock.sendMessage(ctx.from, {
-                text: util.format(language.failed_to_run, ctx.cmd, err.message)
+                text: util.format(getString("failed_to_run"), ctx.cmd, err.message)
             }, { quoted: ctx.msg });
         } catch (_) { }
 
@@ -153,10 +153,53 @@ let connected = false;
 
 let commands;
 
+let language;
+
+let language_default;
+
+async function prepareStringPropData(index) {
+    language = JSON.parse(
+        await fsp.readFile(
+            `./langs/${index}.json`,
+            'utf8'
+        )
+    );
+
+    language_default = JSON.parse(
+        await fsp.readFile(
+            `./langs/en.json`,
+            'utf8'
+        )
+    );
+}
+
+function getString(name) {
+    const keys = name.split('/');
+
+    const getValue = (obj) => {
+        let current = obj;
+        for (const key of keys) {
+            if (current && typeof current === 'object' && key in current) {
+                current = current[key];
+            } else {
+                return undefined;
+            }
+        }
+        return current;
+    };
+
+    let value = getValue(language);
+    if (value !== undefined) return value;
+
+    value = getValue(language_default);
+    if (value !== undefined) return value;
+
+    return `[${name}]`;
+}
+
 async function blossom() {
 
     let configuration;
-
 
     await fsp.mkdir("./database/", { recursive: true });
 
@@ -179,36 +222,31 @@ async function blossom() {
         }
     }
 
-    const language_index = configuration.language;
+    await prepareStringPropData(configuration.language);
 
-    const language = JSON.parse(
-        await fsp.readFile(
-            `./langs/${language_index}.json`,
-            'utf8'
-        )
-    );
+
 
     let preferred_connection;
 
     if (!fs.existsSync("./blossom_auth_info/creds.json")) {
         preferred_connection = await select({
-            message: language.connection_method_ask,
+            message: getString("connection_method_ask"),
             choices: [
                 {
-                    name: language.qr,
+                    name: getString("qr"),
                     value: 'qr',
-                    description: language.qr_setup_info
+                    description: getString("qr_setup_info")
                 },
                 {
-                    name: language.pairing,
+                    name: getString("pairing"),
                     value: 'pairing-code',
-                    description: language.pairing_setup_info
+                    description: getString("pairing_setup_info")
                 }
             ]
         });
     } else {
         if (shouldSendSessionFoundMessage) {
-            console.log(chalk.rgb(0, 255, 0)("╭ [✓]"), chalk.rgb(167, 255, 167)(language.connecting));
+            console.log(chalk.rgb(0, 255, 0)("╭ [✓]"), chalk.rgb(167, 255, 167)(getString("connecting")));
         } else {
             shouldSendSessionFoundMessage = true
         }
@@ -230,17 +268,17 @@ async function blossom() {
         && !state.creds.registered
     ) {
         const phone_number = await input({
-            message: language.pairing_code_needs_number,
+            message: getString("pairing_code_needs_number"),
 
             validate: value =>
                 /^\d+$/.test(value)
-                || language.pairing_code_notice
+                || getString("pairing_code_notice")
         });
 
         const code = await sock.requestPairingCode(phone_number);
 
         console.log(chalk.rgb(255, 174, 0)("\n─ [◎]"),
-            chalk.rgb(255, 220, 167)(language.pair),
+            chalk.rgb(255, 220, 167)(getString("pair")),
             chalk.rgb(255, 220, 167)(
                 code.slice(0, 4) + "-" + code.slice(4)
             ), "\n"
@@ -253,7 +291,7 @@ async function blossom() {
         const { connection, lastDisconnect, qr } = update;
 
         if (connection === 'open') {
-            console.log(chalk.rgb(0, 255, 0)("╰ [✓]"), chalk.rgb(167, 255, 167)(language.connected_to_wa));
+            console.log(chalk.rgb(0, 255, 0)("╰ [✓]"), chalk.rgb(167, 255, 167)(getString("connected_to_wa")));
             connected = true;
         }
 
@@ -261,12 +299,12 @@ async function blossom() {
 
             const shouldReconnect = (lastDisconnect?.error)?.output?.statusCode !== DisconnectReason.loggedOut;
             if ((lastDisconnect?.error)?.output?.statusCode == 515) {
-                console.log(chalk.rgb(0, 255, 0)("╭ [✓]"), chalk.rgb(167, 255, 167)(language.success_restart));
+                console.log(chalk.rgb(0, 255, 0)("╭ [✓]"), chalk.rgb(167, 255, 167)(getString("success_restart")));
                 shouldSendSessionFoundMessage = false
             } else {
                 if (connection_tries >= 3) {
 
-                    console.log(chalk.rgb(255, 8, 0)("╰ [×]"), chalk.rgb(255, 167, 167)(language.tries_exceeded), "\n");
+                    console.log(chalk.rgb(255, 8, 0)("╰ [×]"), chalk.rgb(255, 167, 167)(getString("tries_exceeded")), "\n");
 
                     await sock.end();
 
@@ -279,7 +317,7 @@ async function blossom() {
 
                     return blossom();
                 } else {
-                    console.log(chalk.rgb(255, 8, 0)((connected) ? "\n─ [×]" : "╰" + " [×]"), chalk.rgb(255, 167, 167)(language.failed_to_connect, (shouldReconnect) ? language.reconnecting : ""), "\n");
+                    console.log(chalk.rgb(255, 8, 0)((connected) ? "\n─ [×]" : "╰" + " [×]"), chalk.rgb(255, 167, 167)(getString("failed_to_connect"), (shouldReconnect) ? getString("reconnecting") : ""), "\n");
                     connected = false
                     connection_tries++;
                 }
@@ -289,18 +327,18 @@ async function blossom() {
                 await sock.end();
                 return blossom();
             } else {
-                console.log(chalk.rgb(255, 0, 0)("╭ [×]"), chalk.rgb(255, 167, 167)(language.closed));
+                console.log(chalk.rgb(255, 0, 0)("╭ [×]"), chalk.rgb(255, 167, 167)(getString("closed")));
                 (async () => {
                     await fsp.rm("./blossom_auth_info", { recursive: true, force: true });
                 })();
-                console.log(chalk.rgb(255, 8, 0)("╰ [×]"), chalk.rgb(255, 167, 167)(language.new_session), "\n");
+                console.log(chalk.rgb(255, 8, 0)("╰ [×]"), chalk.rgb(255, 167, 167)(getString("new_session")), "\n");
                 blossom();
             }
         }
 
         if (preferred_connection === "qr") {
             if (qr) {
-                console.log(chalk.rgb(255, 174, 0)("\n─ [◎]"), chalk.rgb(255, 220, 167)(language.scan_qr));
+                console.log(chalk.rgb(255, 174, 0)("\n─ [◎]"), chalk.rgb(255, 220, 167)(getString("scan_qr")));
                 qrcode.generate(qr, { small: true });
             }
         }
@@ -379,14 +417,15 @@ async function blossom() {
             type: msg_type,
             senderNumber,
             participants,
-            language,
             prefix: configuration.default_prefix
         };
 
+        ctx.getString = getString;
+
         if (commands[cmd]) {
-            await runCommand(commands[cmd], ctx, language);
+            await runCommand(commands[cmd], ctx);
         } else {
-            await runCommand(path.resolve("./helpers/command_not_found"), ctx, language);
+            await runCommand(path.resolve("./helpers/command_not_found"), ctx);
         }
 
     });

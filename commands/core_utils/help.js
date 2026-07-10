@@ -3,7 +3,7 @@ const { decorate } = require("../../helpers/decorator.js");
 const { loadCommands } = require("../../index.js");
 
 async function run(ctx) {
-    const { sock, from, msg, language } = ctx;
+    const { sock, from, msg, getString } = ctx;
     const requestedCmd = ctx.args[0];
 
     const CommandMap = await loadCommands();
@@ -14,8 +14,9 @@ async function run(ctx) {
         
         const baseFileName = path.basename(filePath, ".js");
 
-        if (language[baseFileName]?.help) {
-            help_content = language[baseFileName].help.replaceAll("|", ctx.prefix);
+        if (getString(baseFileName + "/help") !== `[${baseFileName}/help]`) {
+            help_content = getString(baseFileName + "/help");
+            help_content = help_content.replaceAll('|', ctx.prefix)
         }
     }
 
@@ -49,7 +50,7 @@ async function run(ctx) {
                     content: [
                         {
                             type: "text",
-                            items: [`${language.help.no_help}`]
+                            items: [`${getString("help/no_help")}`]
                         }
                     ]
                 })
@@ -68,7 +69,7 @@ async function run(ctx) {
                     content: [
                         {
                             type: "text",
-                            items: [`${language.help.no_help_no_exist}`]
+                            items: [`${getString("help/no_help_no_exist")}`]
                         }
                     ]
                 })

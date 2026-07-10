@@ -5,7 +5,7 @@ const stringSimilarity = require("string-similarity");
 
 
 async function run(ctx) {
-    const { sock, from, msg, language } = ctx;
+    const { sock, from, msg, getString } = ctx;
 
     await sock.sendMessage(
         from,
@@ -30,14 +30,14 @@ async function run(ctx) {
         const bestMatch = matches.bestMatch;
 
         if (bestMatch.rating > 0.4) {
-            suggestionText = util.format(`${language.not_found.did_you_mean}`, `${ctx.prefix}${bestMatch.target}`);
+            suggestionText = util.format(`${getString("not_found/did_you_mean")}`, `${ctx.prefix}${bestMatch.target}`);
         }
     }
 
     const greetings = [
-        language.not_found.good_morning,
-        language.not_found.good_afternoon,
-        language.not_found.good_night,
+        getString("not_found/good_morning"),
+        getString("not_found/good_afternoon"),
+        getString("not_found/good_night"),
     ]
 
     let greeting = ""
@@ -57,7 +57,7 @@ async function run(ctx) {
             list_item_type: "simple_item"
         },
         {
-            text: `${util.format(language.not_found.doesnt_exist, ctx.prefix + ctx.cmd)}`,
+            text: `${util.format(getString("not_found/doesnt_exist"), ctx.prefix + ctx.cmd)}`,
             list_item_type: "simple_item"
         }
     ];
@@ -70,14 +70,14 @@ async function run(ctx) {
     }
 
     listItems.push({
-        text: `${util.format(language.not_found.to_see_all_commands, ctx.prefix + "menu")}`,
+        text: `${util.format(getString("not_found/to_see_all_commands"), ctx.prefix + "menu")}`,
         list_item_type: "simple_item"
     });
 
     await sock.sendMessage(from, {
         text: await decorate({
             emoji: "❓",
-            title: language.command_not_found.toLowerCase(),
+            title: getString("command_not_found").toLowerCase(),
             content: [
                 {
                     type: "list_complex",

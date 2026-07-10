@@ -35,7 +35,7 @@
     },
     "ping": {
         "good_morning": "Good morning, %s!",
-        "good_afternoon": "Good afternon, %s!",
+        "good_afternoon": "Good afternoon, %s!",
         "good_night": "Good night, %s!",
         "latency": "Latency:",
         "transmission_speed": "Transmission speed:",
