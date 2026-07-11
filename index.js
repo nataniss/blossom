@@ -42,9 +42,6 @@ if (userArgs.includes("--reset")) {
 
 async function runCommand(commandPath, ctx) {
     try {
-
-        delete require.cache[require.resolve(commandPath)];
-
         const command = require(commandPath);
 
         if (!command.run) {
@@ -61,7 +58,7 @@ async function runCommand(commandPath, ctx) {
             .map(line => chalk.rgb(255, 8, 0)("├ ") + chalk.rgb(255, 167, 167)(line))
             .join('\n');
 
-        console.log(chalk.rgb(255, 8, 0)("\n╭ [×]"), chalk.rgb(255, 167, 167)(util.format(getString("failed_to_run_terminal"), ctx.cmd)));
+        console.log(chalk.rgb(255, 8, 0)("\n╭ [×]"), chalk.rgb(255, 167, 167)(util.format(getString("failed_to_run_terminal"))));
         console.log(chalk.rgb(255, 8, 0)("│ "))
         console.log(log_stack)
         console.log(chalk.rgb(255, 8, 0)("│ "))
@@ -74,6 +71,32 @@ async function runCommand(commandPath, ctx) {
             }, { quoted: ctx.msg });
         } catch (_) { }
 
+    }
+}
+
+async function runMessageCommand(commandPath, ctx) {
+    try {
+
+        delete require.cache[require.resolve(commandPath)];
+
+        const command = require(commandPath);
+
+        await Promise.resolve(command.run(ctx));
+
+    } catch (err) {
+
+        const log_stack = err.stack
+            .split('\n')
+            .map(line => chalk.rgb(255, 8, 0)("├ ") + chalk.rgb(255, 167, 167)(line))
+            .join('\n');
+
+        console.log(chalk.rgb(255, 8, 0)("\n╭ [×]"), chalk.rgb(255, 167, 167)(util.format(getString("failed_to_run_terminal"), ctx.cmd)));
+        console.log(chalk.rgb(255, 8, 0)("│ "))
+        console.log(log_stack)
+        console.log(chalk.rgb(255, 8, 0)("│ "))
+        console.log(chalk.rgb(255, 8, 0)("╰ "))
+
+        return;
     }
 }
 
@@ -464,10 +487,8 @@ async function blossom() {
         } else {
             return
         }
-
+        
         const activePrefix = await getChatPrefix(from, configuration.default_prefix);
-
-        if (!text.startsWith(activePrefix)) return;
 
         const message_without_prefix = text.slice(activePrefix.length);
         const args = message_without_prefix.trim().split(/\s+/);
@@ -488,8 +509,12 @@ async function blossom() {
             participants,
             prefix: activePrefix
         };
-
         ctx.getString = getString;
+
+        await runMessageCommand(path.resolve("./helpers/on_message.js"), ctx);
+
+        if (!text.startsWith(activePrefix)) return;
+
 
         if (commands[cmd]) {
             await runCommand(commands[cmd], ctx);

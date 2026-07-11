@@ -6,6 +6,7 @@
     "owner_added": "Added.",
     "yes": "Yes",
     "no": "No",
+    "prefix_message": "Prefix",
     "connected_to_wa": "Connected to WhatsApp!",
     "reconnecting": "Reconnecting...",
     "failed_to_connect": "Failed to connect to WhatsApp.",
@@ -91,6 +92,7 @@
         "changed_to_reset_all_not_specific": "Prefix reset to the bots default for *all groups which had custom prefixes*.",
         "changed_to_not_global_2": "Note that only *this group* will have its prefix changed, the rest will have its own.",
         "changed_to_global_not_overriten": "Changed prefix from *%s* to *%s* globally.",
+        "its": "My prefix in this group is *\"%s\"*.",
         "changed_to_reset_all_2": "Note that this only applies to groups that had a custom prefix - the bots default is still the same.",
         "changed_to_global_not_overriten_2": "Note that this change only applies to groups without custom prefixes (which are not global). This group prefix was also changed to *%s*.",
         "help": "*|prefix* changes the bot prefix, globally or for specific groups.\n\nUsage:\n> ```|prefix [new prefix]```\nChanges the prefix of the bot globally and in the group the command was ran on. (doesn't get changed in groups with a specific prefix which is not global)\n\n> ```|prefix [new prefix] --reset-all/-ra```\nChanges the prefix of the bot globally, and overrides *ALL* groups with a specific prefix which is not global to the new one.\n\n> ```|prefix --reset/-r```\nIn case the group this was run on has a custom prefix that is not the global one, this will revert it back to the global one.\n\n> ```|prefix [new prefix] --specific/-s```\nChanges the prefix of the bot *specifically for this group*, making the prefix *not global*.¨"
