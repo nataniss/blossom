@@ -1,216 +1,166 @@
 const { decorate } = require("../../helpers/decorator.js");
 const util = require('util');
 const { loadConfig } = require("../../index.js");
-const { mkdir, writeFile, readFile } = require('node:fs/promises');
+const { mkdir, writeFile, readFile, readdir } = require('node:fs/promises');
+
+async function readJson(path, fallback = null) {
+    try {
+        const data = await readFile(path, "utf8");
+        return JSON.parse(data);
+    } catch (e) {
+        if (e.code === 'ENOENT' && fallback !== null) return fallback;
+        throw e;
+    }
+}
+
+async function writeJson(path, data) {
+    await writeFile(path, JSON.stringify(data, null, 2), 'utf8');
+}
+
+async function updateSpecificPrefix(from, newPrefix) {
+    const dirPath = `./database/${from}`;
+    const filePath = `${dirPath}/definitions.json`;
+    await mkdir(dirPath, { recursive: true });
+    
+    const data = await readJson(filePath, {});
+    const oldPrefix = data.prefix || null;
+    data.prefix = newPrefix;
+    await writeJson(filePath, data);
+    return oldPrefix;
+}
+
+async function updateAllPrefixes(newPrefix) {
+    try {
+        const folders = await readdir('./database');
+        for (const folder of folders) {
+            const filePath = `./database/${folder}/definitions.json`;
+            const data = await readJson(filePath, {});
+            data.prefix = newPrefix;
+            await writeJson(filePath, data);
+        }
+    } catch (error) {
+        if (error.code !== 'ENOENT') throw error;
+    }
+}
 
 async function run(ctx) {
-    const { sock, from, msg, getString, args } = ctx;
+    const { sock, from, msg, getString, args, prefix, cmd } = ctx;
 
-    if (args.length === 0 || args.length > 2) {
+    const sendSyntaxError = async () => {
         await sock.sendMessage(from, {
             text: await decorate({
                 emoji: "🎭",
                 title: "prefix",
-                content: [
-                    {
-                        type: "text",
-                        items: [
-                            util.format(getString("generic/incorrect_syntax"), ctx.prefix, ctx.cmd)
-                        ]
-                    }
-                ]
+                content: [{ type: "text", items: [util.format(getString("generic/incorrect_syntax"), prefix, cmd)] }]
             })
         }, { quoted: msg });
+    };
 
+    const config = await readJson("./bot_config.json");
+
+    if (args.length === 1 && ['-r', '--reset'].includes(args[0])) {
+        const oldPrefix = await updateSpecificPrefix(from, config.default_prefix);
+        
+        const stringKey = oldPrefix ? "prefix/changed_to_reset" : "prefix/changed_to_reset_generic";
+        const message = oldPrefix 
+            ? util.format(getString(stringKey), oldPrefix, config.default_prefix)
+            : util.format(getString(stringKey), config.default_prefix);
+
+        await sock.sendMessage(from, {
+            text: await decorate({ emoji: "🎭", title: "prefix", content: [{ type: "text", items: [message] }] })
+        }, { quoted: msg });
+        return;
+    }
+
+    if (args.length === 1 && ['-ra', '--reset-all'].includes(args[0])) {
+        await updateAllPrefixes(config.default_prefix);
+
+        await sock.sendMessage(from, {
+            text: await decorate({
+                emoji: "🎭",
+                title: "prefix",
+                content: [{ type: "text", items: [getString("prefix/changed_to_reset_all_not_specific")] }]
+            })
+        }, { quoted: msg });
         return;
     }
 
     if (args.length === 1) {
-        const configFile = await readFile("./bot_config.json", "utf8");
-        const config = JSON.parse(configFile);
+        const newPrefix = args[0];
 
-        if (config.default_prefix === args[0]) {
+        if (config.default_prefix === newPrefix) {
             await sock.sendMessage(from, {
                 text: await decorate({
                     emoji: "🎭",
                     title: "prefix",
-                    content: [
-                        {
-                            type: "text",
-                            items: [
-                                util.format(getString("prefix/same_prefix"), ctx.prefix),
-                                util.format(getString("prefix/same_prefix2"), ctx.prefix)
-                            ]
-                        }
-                    ]
+                    content: [{ type: "text", items: [util.format(getString("prefix/same_prefix"), prefix), util.format(getString("prefix/same_prefix2"), prefix)] }]
                 })
             }, { quoted: msg });
-
             return;
         }
 
-        config.default_prefix = args[0];
-
-        await writeFile('./bot_config.json', JSON.stringify(config, null, 2), 'utf8');
+        config.default_prefix = newPrefix;
+        await writeJson('./bot_config.json', config);
         await loadConfig();
+
+        await updateSpecificPrefix(from, newPrefix);
 
         await sock.sendMessage(from, {
             text: await decorate({
                 emoji: "🎭",
                 title: "prefix",
-                content: [
-                    {
-                        type: "text",
-                        items: [
-                            util.format(getString("prefix/changed_to_global_not_overriten"), ctx.prefix, args[0]),
-                            util.format(getString("prefix/changed_to_global_not_overriten_2"))
-                        ]
-                    }
-                ]
+                content: [{ type: "text", items: [util.format(getString("prefix/changed_to_global_not_overriten"), prefix, newPrefix), util.format(getString("prefix/changed_to_global_not_overriten_2"), newPrefix)] }]
             })
         }, { quoted: msg });
-
         return;
     }
 
     if (args.length === 2) {
-        switch (args[1]) {
-            case '--specific':
-            case '-s': {
-                let old_prefix = ctx.prefix;
+        const [newPrefix, flag] = args;
 
-                await mkdir(`./database/${from}`, { recursive: true });
-                try {
-                    await writeFile(`./database/${from}/definitions.json`, JSON.stringify({ prefix: args[0] }), { flag: 'wx' });
-                } catch (error) {
-                    if (error.code === 'EEXIST') {
-                        const existingFile = await readFile(`./database/${from}/definitions.json`, "utf8");
-                        const existing_data = JSON.parse(existingFile);
+        if (['-ra', '--reset-all'].includes(flag)) {
+            config.default_prefix = newPrefix;
+            await writeJson('./bot_config.json', config);
+            await loadConfig();
 
-                        if (existing_data.prefix === args[0]) {
-                            await sock.sendMessage(from, {
-                                text: await decorate({
-                                    emoji: "🎭",
-                                    title: "prefix",
-                                    content: [
-                                        {
-                                            type: "text",
-                                            items: [
-                                                util.format(getString("prefix/same_prefix_not_global"), ctx.prefix),
-                                                util.format(getString("prefix/same_prefix2_not_global"), ctx.prefix)
-                                            ]
-                                        }
-                                    ]
-                                })
-                            }, { quoted: msg });
+            await updateAllPrefixes(newPrefix);
 
-                            return;
-                        }
+            await sock.sendMessage(from, {
+                text: await decorate({
+                    emoji: "🎭",
+                    title: "prefix",
+                    content: [{ type: "text", items: [util.format(getString("prefix/changed_to_reset_all"), newPrefix)] }]
+                })
+            }, { quoted: msg });
+            return;
+        }
 
-                        old_prefix = existing_data.prefix;
-                        existing_data.prefix = args[0];
-
-                        await writeFile(`./database/${from}/definitions.json`, JSON.stringify(existing_data, null, 2), 'utf8');
-                    } else {
-                        throw error;
-                    }
-                }
-
+        if (['-s', '--specific'].includes(flag)) {
+            if (prefix === newPrefix) {
                 await sock.sendMessage(from, {
                     text: await decorate({
                         emoji: "🎭",
                         title: "prefix",
-                        content: [
-                            {
-                                type: "text",
-                                items: [
-                                    util.format(getString("prefix/changed_to_not_global"), old_prefix, args[0]),
-                                    util.format(getString("prefix/changed_to_not_global_2"))
-                                ]
-                            }
-                        ]
+                        content: [{ type: "text", items: [util.format(getString("prefix/same_prefix_not_global"), prefix), util.format(getString("prefix/same_prefix2_not_global"), prefix)] }]
                     })
                 }, { quoted: msg });
-
                 return;
             }
-            case '--reset':
-            case '-r': {
-                let old_prefix = null;
 
-                await mkdir(`./database/${from}`, { recursive: true });
-                try {
-                    await writeFile(`./database/${from}/definitions.json`, JSON.stringify({ prefix: ctx.prefix }), { flag: 'wx' });
-                } catch (error) {
-                    if (error.code === 'EEXIST') {
-                        const existingFile = await readFile(`./database/${from}/definitions.json`, "utf8");
-                        const existing_data = JSON.parse(existingFile);
-                        
-                        old_prefix = existing_data.prefix;
+            const oldPrefix = await updateSpecificPrefix(from, newPrefix);
 
-                        existing_data.prefix = ctx.prefix;
-
-                        await writeFile(`./database/${from}/definitions.json`, JSON.stringify(existing_data, null, 2), 'utf8');
-                    } else {
-                        throw error;
-                    }
-                }
-                
-                let deco_reset;
-                if (old_prefix !== null) {
-                    deco_reset = {
-                        emoji: "🎭",
-                        title: "prefix",
-                        content: [
-                            {
-                                type: "text",
-                                items: [
-                                    util.format(getString("prefix/changed_to_reset"), old_prefix, args[0]),
-                                ]
-                            }
-                        ]
-                    };
-                } else {
-                    deco_reset = {
-                        emoji: "🎭",
-                        title: "prefix",
-                        content: [
-                            {
-                                type: "text",
-                                items: [
-                                    util.format(getString("prefix/changed_to_reset_generic"), args[0]),
-                                ]
-                            }
-                        ]
-                    };
-                }
-
-                await sock.sendMessage(from, {
-                    text: await decorate(deco_reset)
-                }, { quoted: msg });
-
-                return;
-            }
-            default: {
-                await sock.sendMessage(from, {
-                    text: await decorate({
-                        emoji: "🎭",
-                        title: "prefix",
-                        content: [
-                            {
-                                type: "text",
-                                items: [
-                                    util.format(getString("generic/incorrect_syntax"), ctx.prefix, ctx.cmd)
-                                ]
-                              }
-                        ]
-                    })
-                }, { quoted: msg });
-
-                return;
-            }
+            await sock.sendMessage(from, {
+                text: await decorate({
+                    emoji: "🎭",
+                    title: "prefix",
+                    content: [{ type: "text", items: [util.format(getString("prefix/changed_to_not_global"), oldPrefix || prefix, newPrefix), util.format(getString("prefix/changed_to_not_global_2"))] }]
+                })
+            }, { quoted: msg });
+            return;
         }
     }
+
+    await sendSyntaxError();
 }
 
 module.exports = { run };

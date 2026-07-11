@@ -17,6 +17,18 @@ const GROUP_CACHE = new Map();
 
 const userArgs = process.argv.slice(2)
 
+async function getChatPrefix(from, defaultPrefix) {
+    try {
+        const filePath = `./database/${from}/definitions.json`;
+        const fileData = await fsp.readFile(filePath, "utf8");
+        const json = JSON.parse(fileData);
+        return json.prefix || defaultPrefix;
+    } catch (e) {
+        if (e.code === 'ENOENT') return defaultPrefix;
+        throw e;
+    }
+}
+
 if (userArgs.includes("--reset")) {
     if (fs.existsSync("./blossom_auth_info/creds.json")) {
         (async () => {
@@ -410,10 +422,11 @@ async function blossom() {
 
         if (!msg.message) return;
 
-        const text = msg.message.conversation ||
-            msg.message.extendedTextMessage?.text ||
-            msg.message.imageMessage?.caption ||
-            msg.message.videoMessage?.caption ||
+        const messageContent = msg.message.ephemeralMessage?.message || msg.message;
+        const text = messageContent?.conversation ||
+            messageContent?.extendedTextMessage?.text ||
+            messageContent?.imageMessage?.caption ||
+            messageContent?.videoMessage?.caption ||
             "";
 
         const isGroup = from.endsWith('@g.us');
@@ -452,11 +465,11 @@ async function blossom() {
             return
         }
 
-        if (!text.startsWith(configuration.default_prefix)) return;
+        const activePrefix = await getChatPrefix(from, configuration.default_prefix);
 
-        const message_without_prefix =
-            text.slice(configuration.default_prefix.length);
+        if (!text.startsWith(activePrefix)) return;
 
+        const message_without_prefix = text.slice(activePrefix.length);
         const args = message_without_prefix.trim().split(/\s+/);
         const cmd = args.shift().toLowerCase();
         let msg_type = Object.keys(msg.message)[0];
@@ -473,7 +486,7 @@ async function blossom() {
             type: msg_type,
             senderNumber,
             participants,
-            prefix: configuration.default_prefix
+            prefix: activePrefix
         };
 
         ctx.getString = getString;
@@ -483,7 +496,6 @@ async function blossom() {
         } else {
             await runCommand(path.resolve("./helpers/command_not_found"), ctx);
         }
-
     });
 }
 
