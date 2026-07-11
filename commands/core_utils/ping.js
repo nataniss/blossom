@@ -32,8 +32,6 @@ async function run(ctx) {
     const currentHour = new Date(end).getHours();
     const latency = (Date.now() - msg.messageTimestamp * 1000) / 1000;
 
-    console.log("latency:", latency, "timestamp:", msg.messageTimestamp, "datenow:", Date.now())
-
     const greetings = [
         getString("ping/good_morning"),
         getString("ping/good_afternoon"),

@@ -139,7 +139,8 @@ async function makeConfig() {
     const config = {
         language: language_chosen,
         default_prefix: prefix,
-        style: "blossom_default"
+        style: "blossom_default",
+        owners: []
     }
 
     fs.writeFileSync(
@@ -207,23 +208,29 @@ async function prepareFontProps() {
 
 }
 
-async function blossom() {
+let configuration;
 
-    let configuration;
-
-    await fsp.mkdir("./database/", { recursive: true });
-
-    console.log(chalk.rgb(255, 180, 255)("╭ [✓]"), chalk.rgb(255, 225, 255)("Loading commands..."));
-    commands = await loadCommands();
-    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Done loading commands, %s loaded on total"));
-    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Loading your bot configuration..."));
-    try {
+async function loadConfig() {
         const data = await fsp.readFile(
             './bot_config.json',
             'utf8'
         );
         
         configuration = JSON.parse(data);
+
+}
+
+async function blossom() {
+
+    await fsp.mkdir("./database/", { recursive: true });
+
+    console.log(chalk.rgb(255, 180, 255)("╭ [✓]"), chalk.rgb(255, 225, 255)("Loading command meta-data..."));
+    commands = await loadCommands();
+    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)(util.format("Done loading command meta-data, %s loaded on total",  Object.keys(commands).length)));
+    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Loading your bot configuration..."));
+    try {
+
+        await loadConfig();
         
     } catch (error) {
         
@@ -233,13 +240,13 @@ async function blossom() {
             throw error;
         }
     } finally {
-        console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Done loading your bot configuration."));
+        console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Done loading your bot configuration"));
     }
 
     console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Loading text string definitions..."));
     await prepareStringPropData(configuration.language);
-    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)(util.format(getString("loading_strings_after"), getString("language"))));
     console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)(util.format(getString("loading_strings_done"), Object.keys(language).length)));
+    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)(util.format(getString("loading_strings_after"), getString("language"))));
 
     console.log(chalk.rgb(255, 180, 255)("╰ [✓]"), chalk.rgb(255, 225, 255)(getString("all_done")), "\n");
 
@@ -310,6 +317,38 @@ async function blossom() {
         if (connection === 'open') {
             console.log(chalk.rgb(0, 255, 0)("╰ [✓]"), chalk.rgb(167, 255, 167)(getString("connected_to_wa")));
             connected = true;
+
+            const botNumber = sock.authState.creds.me?.id.split(':')[0].split('@')[0];
+
+            if (botNumber) {
+                const configData = await fsp.readFile('./bot_config.json', 'utf8');
+                let currentConfig = JSON.parse(configData);
+
+                if (!currentConfig.owners) currentConfig.owners = [];
+
+                if (!currentConfig.owners.includes(botNumber)) {
+                    const addToOwners = await select({
+                        message: util.format(getString("owner_add"), botNumber),
+                        choices: [
+                            { name: getString("yes") , value: true },
+                            { name: getString("no"), value: false }
+                        ]
+                    });
+
+                    if (addToOwners) {
+                        currentConfig.owners.push(botNumber);
+                        
+                        configuration.owners = currentConfig.owners; 
+
+                        await fsp.writeFile(
+                            'bot_config.json',
+                            JSON.stringify(currentConfig, null, 2),
+                            'utf8'
+                        );
+                        console.log(chalk.rgb(0, 255, 0)("─ [✓]"),chalk.rgb(167, 255, 167)(getString("owner_added")));
+                    }
+                }
+            }
         }
 
         else if (connection === 'close') {
@@ -451,5 +490,6 @@ async function blossom() {
 blossom();
 
 module.exports = {
-    loadCommands
+    loadCommands,
+    loadConfig
 }
