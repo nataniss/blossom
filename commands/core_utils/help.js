@@ -17,6 +17,7 @@ async function run(ctx) {
         if (getString(baseFileName + "/help") !== `[${baseFileName}/help]`) {
             help_content = getString(baseFileName + "/help");
             help_content = help_content.replaceAll('|', ctx.prefix)
+            help_content = help_content.replaceAll('¨', "\n\n*" + getString("help/captions_text") + "*\n\n" + getString("help/captions"))
         }
     }
 

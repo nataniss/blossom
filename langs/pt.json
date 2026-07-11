@@ -56,7 +56,9 @@
     "help": {
         "no_help": "Este comando não tem uma página de ajuda.\nBem, pelo menos por enquanto :)",
         "no_help_no_exist": "Este comando não tem uma página de ajuda pois o comando não existe.",
-        "help": "*|help* é um comando usado para obter informações úteis sobre um comando. Por exemplo, você receberá instruções de como usá-lo, dicas e truques, e mais.\n\nUso:\n> ```|help <nome do comando>```"
+        "help": "*|help* é um comando usado para obter informações úteis sobre um comando. Por exemplo, você receberá instruções de como usá-lo, dicas e truques, e mais.\n\nUso:\n> ```|help <nome do comando>```¨",
+        "captions_text": "Legendas para comandos",
+        "captions": "> ```<argumento>```\nArgumento opcional — fornece conteúdo adicional, mas pode ser omitido.\n\n> ```[argumento]```\nArgumento obrigatório — o comando não será executado sem ele.\n\n> ```--flag (forma longa) / -f (forma curta)```\nConfigurações que modificam o comportamento da execução — sempre opcional."
     },
     "menu": {
         "moderation": "Moderação",
@@ -68,6 +70,9 @@
         "see_by": "%smenu %s",
         "categories_1": "Você está vendo categorias.",
         "categories_2": "Para ver os comandos dentro de uma categoria, rode *\"%smenu <nome da categoria>\"*.",
-        "help": "*|menu* mostra todos os comandos do bot.\nSão separados em categorias, com cada categoria tendo sua própria lista de comandos disponíveis.\n\nUso:\n> ```|menu```\nMostra todas as categorias.\n\n> ```|menu <nome da categoria>```\nMostra todos os comandos dentro de uma categoria.\n\n> ```|menu --all```\nMostra *todos* os comandos de *todas* as categorias em *uma* mensagem."
+        "help": "*|menu* mostra todos os comandos do bot.\nSão separados em categorias, com cada categoria tendo sua própria lista de comandos disponíveis.\n\nUso:\n> ```|menu```\nMostra todas as categorias.\n\n> ```|menu <nome da categoria>```\nMostra todos os comandos dentro de uma categoria.\n\n> ```|menu --all/-a```\nMostra *todos* os comandos de *todas* as categorias em *uma* mensagem.¨"
+    },
+    "prefix": {
+        "help": "*|prefix* altera o prefixo do bot, globalmente ou para grupos específicos.\n\nComo usar:\n> ```|prefix [novo prefixo]```\nAltera o prefixo do bot globalmente. (não é alterado em grupos com um prefixo específico que não seja global)\n\n> ```|prefix [novo prefixo] --override/-o```\nAltera o prefixo do bot globalmente e substitui *TODOS* os grupos com um prefixo específico que não seja global pelo novo.\n\n> ```|prefix --reset/-r```\nCaso o grupo em que este comando foi executado tenha um prefixo personalizado que não seja o global, isso o reporá para o prefixo global.\n\n> ```|prefix [novo prefixo] --specific/-s```\nAltera o prefixo do bot *especificamente para este grupo*, tornando o prefixo *não global*.¨"
     }
 }

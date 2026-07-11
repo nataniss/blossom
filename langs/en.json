@@ -56,7 +56,9 @@
     "help": {
         "no_help": "This command doesn't have a help page.\nWell, not yet :)",
         "no_help_no_exist": "This command doesn't have a help page because it doesn't exist.",
-        "help": "*|help* is a command used to check useful information about a command. For example, you'll get info on how to use it, tips and tricks, and more.\n\nUsage:\n> ```|help <command name>```"
+        "help": "*|help* is a command used to check useful information about a command. For example, you'll get info on how to use it, tips and tricks, and more.\n\nUsage:\n> ```|help <command name>```",
+        "captions_text": "Command captions",
+        "captions": "> ```<argument>```\nOptional argument - provides extra content but can be skipped.\n\n> ```[argument]```\nNecessary argument - the command will not run without it.\n\n> ```--flag (long) / -f (short)```\nToggle settings that modify execution behavior - always optional."
     },
     "menu": {
         "moderation": "Moderation",
@@ -68,6 +70,9 @@
         "see_by": "%smenu %s",
         "categories_1": "You're viewing categories.",
         "categories_2": "To check the commands inside a category, run *\"%smenu <category name>\"*.",
-        "help": "*|menu* displays all commands of this bot.\nThey are separated in categories, with each category containing it's own list of available commands.\n\nUsage:\n> ```|menu```\nDisplays all categories.\n\n> ```|menu <category name>```\nDisplays all commands inside a category.\n\n> ```|menu --all```\nDisplays *all* commands in *all* categories in *one* message."
+        "help": "*|menu* displays all commands of this bot.\nThey are separated in categories, with each category containing it's own list of available commands.\n\nUsage:\n> ```|menu```\nDisplays all categories.\n\n> ```|menu <category name>```\nDisplays all commands inside a category.\n\n> ```|menu --all/-a```\nDisplays *all* commands in *all* categories in *one* message.¨"
+    },
+    "prefix": {
+        "help": "*|prefix* changes the bot prefix, globally or for specific groups.\n\nUsage:\n> ```|prefix [new prefix]```\nChanges the prefix of the bot globally. (doesn't get changed in groups with a specific prefix which is not global)\n\n> ```|prefix [new prefix] --override/-o```\nChanges the prefix of the bot globally, and overrides *ALL* groups with a specific prefix which is not global to the new one.\n\n> ```|prefix --reset/-r```\nIn case the group this was run on has a custom prefix that is not the global one, this will revert it back to the global one.\n\n> ```|prefix [new prefix] --specific/-s```\nChanges the prefix of the bot *specifically for this group*, making the prefix *not global*.¨"
     }
 }

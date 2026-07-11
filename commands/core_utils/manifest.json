@@ -12,6 +12,10 @@
         {
             "file": "menu.js",
             "aliases": ["menu"]
+        },
+        {
+            "file": "prefix.js",
+            "aliases": ["prefix"]
         }
     ]
 }
