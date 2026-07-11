@@ -128,9 +128,17 @@ async function makeConfig() {
         choices: languages_input
     });
 
+    await prepareStringPropData(language_chosen);
+
+    let prefix = await input({ message: getString("config_make_prefix_ask") });
+
+    if (prefix.trim().length === 0 || prefix) {
+        prefix = "/"
+    }
+
     const config = {
         language: language_chosen,
-        default_prefix: "!",
+        default_prefix: prefix,
         style: "blossom_default"
     }
 
@@ -146,16 +154,14 @@ async function makeConfig() {
 console.log(chalk.rgb(255, 180, 255)('─ [㋡]'), chalk.rgb(255, 225, 255)('Blossom Bot v1.0'), "\n")
 
 let connection_tries = 0;
-
 let shouldSendSessionFoundMessage = true;
-
 let connected = false;
-
 let commands;
 
-let language;
+let language = {};
+let language_default = {};
 
-let language_default;
+let fonts = {};
 
 async function prepareStringPropData(index) {
     language = JSON.parse(
@@ -197,34 +203,45 @@ function getString(name) {
     return `[${name}]`;
 }
 
+async function prepareFontProps() {
+
+}
+
 async function blossom() {
 
     let configuration;
 
     await fsp.mkdir("./database/", { recursive: true });
 
+    console.log(chalk.rgb(255, 180, 255)("╭ [✓]"), chalk.rgb(255, 225, 255)("Loading commands..."));
     commands = await loadCommands();
-
+    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Done loading commands, %s loaded on total"));
+    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Loading your bot configuration..."));
     try {
         const data = await fsp.readFile(
             './bot_config.json',
             'utf8'
         );
-
+        
         configuration = JSON.parse(data);
-
+        
     } catch (error) {
-
+        
         if (error.code === 'ENOENT') {
             configuration = await makeConfig();
         } else {
             throw error;
         }
+    } finally {
+        console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Done loading your bot configuration."));
     }
 
+    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Loading text string definitions..."));
     await prepareStringPropData(configuration.language);
+    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)(util.format(getString("loading_strings_after"), getString("language"))));
+    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)(util.format(getString("loading_strings_done"), Object.keys(language).length)));
 
-
+    console.log(chalk.rgb(255, 180, 255)("╰ [✓]"), chalk.rgb(255, 225, 255)(getString("all_done")), "\n");
 
     let preferred_connection;
 
