@@ -16,6 +16,10 @@
         {
             "file": "prefix.js",
             "aliases": ["prefix"]
+        },
+        {
+            "file": "props.js",
+            "aliases": ["setprop", "getprop"]
         }
     ]
 }

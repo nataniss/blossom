@@ -1,9 +1,16 @@
+const userArgs = process.argv.slice(2);
+
+const useEnhanced = userArgs.includes('--enhanced');
+
+const libraryPath = useEnhanced ? '@itsliaaa/baileys' : '@whiskeysockets/baileys';
+
 const {
     makeWASocket,
     useMultiFileAuthState,
     DisconnectReason,
     fetchLatestBaileysVersion
-} = require('@whiskeysockets/baileys');
+} = require(libraryPath);
+
 const pino = require('pino');
 const path = require('node:path');
 const fs = require('node:fs');
@@ -12,10 +19,13 @@ const { select, input } = require('@inquirer/prompts');
 const fsp = require('node:fs/promises');
 const chalk = require('chalk');
 const util = require('util');
+const profile_mgr = require("./helpers/profile_manager")
 
 const GROUP_CACHE = new Map();
 
-const userArgs = process.argv.slice(2)
+let has_started = false;
+
+let profiles = profile_mgr.loadProfiles();
 
 async function getChatPrefix(from, defaultPrefix) {
     try {
@@ -188,6 +198,7 @@ async function makeConfig() {
 }
 
 console.log(chalk.rgb(255, 180, 255)('─ [㋡]'), chalk.rgb(255, 225, 255)('Blossom Bot v1.0'), "\n")
+console.log(chalk.rgb(255, 180, 255)('─ [㋡]'), chalk.rgb(255, 225, 255)(`Using library: ${libraryPath}`), "\n");
 
 let connection_tries = 0;
 let shouldSendSessionFoundMessage = true;
@@ -258,11 +269,8 @@ async function loadConfig() {
 async function blossom() {
 
     await fsp.mkdir("./database/", { recursive: true });
-
-    console.log(chalk.rgb(255, 180, 255)("╭ [✓]"), chalk.rgb(255, 225, 255)("Loading command meta-data..."));
+    
     commands = await loadCommands();
-    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)(util.format("Done loading command meta-data, %s loaded on total",  Object.keys(commands).length)));
-    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Loading your bot configuration..."));
     try {
 
         await loadConfig();
@@ -274,16 +282,11 @@ async function blossom() {
         } else {
             throw error;
         }
-    } finally {
-        console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Done loading your bot configuration"));
     }
 
-    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)("Loading text string definitions..."));
     await prepareStringPropData(configuration.language);
-    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)(util.format(getString("loading_strings_done"), Object.keys(language).length)));
-    console.log(chalk.rgb(255, 180, 255)("│ [✓]"), chalk.rgb(255, 225, 255)(util.format(getString("loading_strings_after"), getString("language"))));
 
-    console.log(chalk.rgb(255, 180, 255)("╰ [✓]"), chalk.rgb(255, 225, 255)(getString("all_done")), "\n");
+    has_started = true;
 
     let preferred_connection;
 
@@ -438,7 +441,7 @@ async function blossom() {
 
     sock.ev.on('messages.upsert', async ({ messages, type }) => {
         if (type !== 'notify') return;
-
+        
         let msg = messages[0];
 
         const from = msg.key.remoteJid;
@@ -450,6 +453,7 @@ async function blossom() {
             messageContent?.extendedTextMessage?.text ||
             messageContent?.imageMessage?.caption ||
             messageContent?.videoMessage?.caption ||
+            messageContent?.buttonsResponseMessage?.selectedButtonId ||
             "";
 
         const isGroup = from.endsWith('@g.us');
@@ -511,16 +515,23 @@ async function blossom() {
         };
         ctx.getString = getString;
 
+        profiles[from] = profiles[from] || {};
+
         await runMessageCommand(path.resolve("./helpers/on_message.js"), ctx);
+
+        await profile_mgr.saveProfiles(profiles);
 
         if (!text.startsWith(activePrefix)) return;
 
+        await sock.sendPresenceUpdate('composing', from);
 
         if (commands[cmd]) {
             await runCommand(commands[cmd], ctx);
         } else {
             await runCommand(path.resolve("./helpers/command_not_found"), ctx);
         }
+
+        await sock.sendPresenceUpdate('paused', from);
     });
 }
 
@@ -528,5 +539,7 @@ blossom();
 
 module.exports = {
     loadCommands,
-    loadConfig
+    loadConfig,
+    profiles,
+    useEnhanced
 }

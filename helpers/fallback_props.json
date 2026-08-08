@@ -1,0 +1,10 @@
+{
+    "leveling": {
+        "type": "boolean",
+        "fallback": false
+    },
+    "use_buttons": {
+        "type": "boolean",
+        "fallback": false
+    }
+}

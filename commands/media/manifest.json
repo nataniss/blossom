@@ -1,0 +1,9 @@
+{
+    "package": "media",
+    "commands": [
+        {
+            "file": "play.js",
+            "aliases": ["play"]
+        }
+    ]
+}

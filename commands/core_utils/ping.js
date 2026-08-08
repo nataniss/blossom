@@ -73,12 +73,11 @@ async function run(ctx) {
                             items: [
                                 {
                                     emoji: "📡",
-                                    text: `${getString("ping/latency")} ${latency.toFixed(2)}s`,
+                                    text: `${getString("ping/latency")}`,
                                     list_item_type: "emoji_item"
                                 },
                                 {
                                     emoji: "📡",
-    
                                     text: `*${latency.toFixed(2)}s (${rateLatency(latency, getString)})*`,
                                     list_item_type: "emoji_arrow"
                                 },
