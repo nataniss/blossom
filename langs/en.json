@@ -108,23 +108,30 @@
         "type_error": "The property *%s* is of type *%s*; and you tried to set it as *%s*, which is *incompatible*."
     },
     "play": {
-        "play": "play",
+        "play": "Play",
         "title": "Title",
         "duration": "Duration",
         "author": "Author",
+        "views": "Views",
+        "likes": "Likes",
+        "uploaded": "Uploaded",
         "description": "Description",
         "by": "Made by %s:",
-        "download_audio": "Download audio (%s)",
-        "download_video": "Download video (%s)",
+        "download_audio": "╰┈➤ Download audio",
+        "download_video": "╰┈➤ Download video",
         "download_as_audio": "Download as audio...",
         "download_as_video": "Download as video...",
-        "audio_low": "OGG, low quality",
-        "audio_high": "OGG, high quality",
-        "video_low": "MP4, low quality",
-        "video_mid": "MP4, medium quality",
-        "video_high": "MP4, high quality",
         "other_vids": "Other videos",
-        "enhanced_footer": "This isn't the video you want? Press \"Other videos\" below to select another one to download."
-
+        "enhanced_footer": "This isn't the video you want? Press \"Other videos\" below to select another one to download.",
+        "downloading": "Downloading, please wait!",
+        "no_binaries_found": "Necessary binaries were not found! To use this command, you need to install ```ffmpeg``` and ```yt-dlp```. Stop the bot, install them making sure they are in your PATH enviroment variable, and start the bot again."
+    },
+    "sticker": {
+        "sticker": "Sticker",
+        "duration_not_permitted": "Input must be under 9.9 seconds!",
+        "error_compressing": "Error compressing sticker!",
+        "error_adding_sticker": "Error adding sticker metadata!",
+        "error_no_input": "Reply to or send any photo, video, or GIF with %s%s to turn it into a sticker.",
+        "no_binaries_found": "Necessary binary not found! To use this command, you need to install ```ffmpeg```. Stop the bot, install it making sure it is in your PATH enviroment variable, and start the bot again."
     }
 }

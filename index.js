@@ -257,26 +257,26 @@ async function prepareFontProps() {
 let configuration;
 
 async function loadConfig() {
-        const data = await fsp.readFile(
-            './bot_config.json',
-            'utf8'
-        );
-        
-        configuration = JSON.parse(data);
+    const data = await fsp.readFile(
+        './bot_config.json',
+        'utf8'
+    );
+
+    configuration = JSON.parse(data);
 
 }
 
 async function blossom() {
 
     await fsp.mkdir("./database/", { recursive: true });
-    
+
     commands = await loadCommands();
     try {
 
         await loadConfig();
-        
+
     } catch (error) {
-        
+
         if (error.code === 'ENOENT') {
             configuration = await makeConfig();
         } else {
@@ -368,22 +368,22 @@ async function blossom() {
                     const addToOwners = await select({
                         message: util.format(getString("owner_add"), botNumber),
                         choices: [
-                            { name: getString("yes") , value: true },
+                            { name: getString("yes"), value: true },
                             { name: getString("no"), value: false }
                         ]
                     });
 
                     if (addToOwners) {
                         currentConfig.owners.push(botNumber);
-                        
-                        configuration.owners = currentConfig.owners; 
+
+                        configuration.owners = currentConfig.owners;
 
                         await fsp.writeFile(
                             'bot_config.json',
                             JSON.stringify(currentConfig, null, 2),
                             'utf8'
                         );
-                        console.log(chalk.rgb(0, 255, 0)("─ [✓]"),chalk.rgb(167, 255, 167)(getString("owner_added")));
+                        console.log(chalk.rgb(0, 255, 0)("─ [✓]"), chalk.rgb(167, 255, 167)(getString("owner_added")));
                     }
                 }
             }
@@ -441,7 +441,7 @@ async function blossom() {
 
     sock.ev.on('messages.upsert', async ({ messages, type }) => {
         if (type !== 'notify') return;
-        
+
         let msg = messages[0];
 
         const from = msg.key.remoteJid;
@@ -449,11 +449,21 @@ async function blossom() {
         if (!msg.message) return;
 
         const messageContent = msg.message.ephemeralMessage?.message || msg.message;
+        const nativeFlowParams = messageContent?.interactiveResponseMessage?.nativeFlowResponseMessage?.paramsJson;
+
+        let interactiveId = "";
+
+        if (nativeFlowParams) {
+            const parsedParams = JSON.parse(nativeFlowParams);
+            interactiveId = parsedParams?.id || "";
+        }
+
         const text = messageContent?.conversation ||
             messageContent?.extendedTextMessage?.text ||
             messageContent?.imageMessage?.caption ||
             messageContent?.videoMessage?.caption ||
             messageContent?.buttonsResponseMessage?.selectedButtonId ||
+            interactiveId ||
             "";
 
         const isGroup = from.endsWith('@g.us');
@@ -491,7 +501,7 @@ async function blossom() {
         } else {
             return
         }
-        
+
         const activePrefix = await getChatPrefix(from, configuration.default_prefix);
 
         const message_without_prefix = text.slice(activePrefix.length);

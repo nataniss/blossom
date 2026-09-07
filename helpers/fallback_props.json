@@ -6,5 +6,13 @@
     "use_buttons": {
         "type": "boolean",
         "fallback": false
+    },
+    "stickers_attach_group_name": {
+        "type": "boolean",
+        "fallback": false
+    },
+    "bot_name": {
+        "type": "string",
+        "fallback": "𝓫𝓵𝓸𝓼𝓼𝓸𝓶ᵇᵒᵗ"
     }
 }

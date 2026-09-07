@@ -3,7 +3,11 @@
     "commands": [
         {
             "file": "play.js",
-            "aliases": ["play"]
+            "aliases": ["play", "play_video"]
+        },
+        {
+            "file": "sticker.js",
+            "aliases": ["s", "sz", "sr"]
         }
     ]
 }
