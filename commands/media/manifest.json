@@ -8,6 +8,10 @@
         {
             "file": "sticker.js",
             "aliases": ["s", "sz", "sr"]
+        },
+        {
+            "file": "sticker_convert.js",
+            "aliases": ["toimg", "togif", "tovid"]
         }
     ]
 }
