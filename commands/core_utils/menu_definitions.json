@@ -1,0 +1,106 @@
+{
+    "main": {
+        "categories": {
+            "utilities": {
+                "emoji": "🛠️",
+                "needs_admin": false
+            },
+            "entertainment": {
+                "emoji": "🕹️",
+                "needs_admin": false
+            },
+            "downloads": {
+                "emoji": "📥",
+                "needs_admin": false
+            },
+            "leveling": {
+                "emoji": "🏆",
+                "needs_admin": false
+            },
+            "group": {
+                "emoji": "📊",
+                "needs_admin": false
+            },
+            "moderation": {
+                "emoji": "⚙️",
+                "needs_admin": true
+            },
+            "bot": {
+                "emoji": "🤖",
+                "needs_admin": false
+            }
+        }
+    },
+    "utilities": {
+        "commands": [
+            {
+                "emoji": "🖼️",
+                "aliases": [
+                    "s",
+                    "sz",
+                    "sr"
+                ]
+            },
+            {
+                "emoji": "🔄",
+                "aliases": [
+                    "toimg",
+                    "togif",
+                    "tovid"
+                ]
+            }
+        ]
+    },
+    "entertainment": {
+        "commands": []
+    },
+    "downloads": {
+        "commands": [
+            {
+                "emoji": "📼",
+                "aliases": [
+                    "play",
+                    "play_video"
+                ]
+            }
+        ]
+    },
+    "leveling": {
+        "commands": []
+    },
+    "group": {
+        "commands": []
+    },
+    "moderation": {
+        "commands": []
+    },
+    "bot": {
+        "commands": [
+            {
+                "emoji": "🖥️",
+                "aliases": [
+                    "setprop",
+                    "getprop"
+                ]
+            },
+            {
+                "emoji": "❗",
+                "aliases": [
+                    "prefix"
+                ]
+            },
+            {
+                "emoji": "🏓",
+                "aliases": [
+                    "ping"
+                ]
+            },
+            {
+                "emoji": "❓",
+                "aliases": [
+                    "help"
+                ]
+            }
+        ]
+    }
+}

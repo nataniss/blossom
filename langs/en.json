@@ -76,6 +76,8 @@
         "group": "Group",
         "downloads": "Downloads",
         "leveling": "Leveling",
+        "bot": "Bot",
+        "viewing_commands_of": "Viewing commands of category *\"%s\"*",
         "see_by": "%smenu %s",
         "categories_1": "You're viewing categories.",
         "categories_2": "To check the commands inside a category, run *\"%smenu <category name>\"*.",
@@ -135,12 +137,12 @@
         "no_binaries_found": "Necessary binary not found! To use this command, you need to install ```ffmpeg```. Stop the bot, install it making sure it is in your PATH enviroment variable, and start the bot again."
     },
     "sticker_convert": {
-        "please_wait": "Please wait, converting stickers to GIFs or Videos takes some time.",
-        "error_no_input": "Reply to any sticker with %s%s to turn it into %s",
-        "a_gif": "a GIF.",
-        "a_video": "a video.",
-        "an_image": "an image.",
-        "not_static": "That sticker is not static. Try %s%s with it.",
-        "not_animated": "That sticker is not animated. Try %s%s or %s%s with it."
+        "please_wait": "Please wait, converting a sticker into %s takes some time.",
+        "error_no_input": "Reply to any sticker with %s%s to turn it into %s.",
+        "a_gif": "a GIF",
+        "a_video": "a video",
+        "an_image": "an image",
+        "not_static": "That sticker is not static. Try %s%s or %s%s with it.",
+        "not_animated": "That sticker is not animated. Try %s%s with it."
     }
 }

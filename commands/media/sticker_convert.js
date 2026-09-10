@@ -78,14 +78,14 @@ async function downloadandSendSticker(quotedMessageStructure, ctx) {
                 }
             });
             return await sock.sendMessage(from, {
-                text: `❌ ${util.format(getString("sticker_convert/not_static"), ctx.prefix, "toimg")}`
+                text: `❌ ${util.format(getString("sticker_convert/not_static"), ctx.prefix, "togif", ctx.prefix, "tovid")}`
             }, {
                 quoted: msg
             });
         } else {
             try {
                 await sock.sendMessage(from, {
-                    text: `⌛️ ${getString("sticker_convert/please_wait")}`
+                    text: `⌛️ ${util.format(getString("sticker_convert/please_wait"), (cmd == "togif") ? getString("sticker_convert/a_gif") : getString("sticker_convert/a_video"))}`
                 }, {
                     quoted: msg
                 });
@@ -121,7 +121,7 @@ async function downloadandSendSticker(quotedMessageStructure, ctx) {
                 }
             });
             return await sock.sendMessage(from, {
-                text: `❌ ${util.format(getString("sticker_convert/not_animated"), ctx.prefix, "togif", ctx.prefix, "tovid")}`
+                text: `❌ ${util.format(getString("sticker_convert/not_animated"), ctx.prefix, "toimg")}`
             }, {
                 quoted: msg
             });
