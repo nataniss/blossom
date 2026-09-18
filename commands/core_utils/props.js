@@ -2,8 +2,6 @@ const { decorate } = require("../../helpers/decorator.js")
 const { getProp, setProp } = require("../../helpers/prop_mgr.js");
 const util = require('util');
 
-// todo: help
-
 function parsePrimitive(value) {
     const trimmed = value.trim();
 

@@ -545,11 +545,16 @@ async function blossom() {
     });
 }
 
+function getLanguage() {
+    return configuration.language
+}
+
 blossom();
 
 module.exports = {
     loadCommands,
     loadConfig,
     profiles,
-    useEnhanced
+    useEnhanced,
+    getLanguage
 }

@@ -59,15 +59,13 @@
         "average": "Average",
         "fast": "Fast",
         "slow": "Slow",
-        "extremely_slow": "Extremely slow",
-        "help": "|ping is a command used to test the bot's response time and connectivity to WhatsApp's servers. It serves like a \"are you alive?\" check.\nIt responds you with the *latency* and *transmission speed*. Latency means the time that the bot took to recieve the message, and the transmission speed means the time the bot took to build and send a message."
+        "extremely_slow": "Extremely slow"
     },
     "help": {
-        "no_help": "This command doesn't have a help page.\nWell, not yet :)",
-        "no_help_no_exist": "This command doesn't have a help page because it doesn't exist.",
-        "help": "*|help* is a command used to check useful information about a command. For example, you'll get info on how to use it, tips and tricks, and more.\n\nUsage:\n> ```|help <command name>```",
-        "captions_text": "Command captions",
-        "captions": "> ```<argument>```\nOptional argument - provides extra content but can be skipped.\n\n> ```[argument]```\nNecessary argument - the command will not run without it.\n\n> ```--flag (long) / -f (short)```\nToggle settings that modify execution behavior - always optional."
+        "help": "Help",
+        "command_doesnt_exist": "The requested command does not exist.",
+        "to_see_all_commands": "See all comands with *%s*.",
+        "no_help": "This command has no help page. Oops!"
     },
     "menu": {
         "moderation": "Moderation",
@@ -80,8 +78,7 @@
         "viewing_commands_of": "Viewing commands of category *\"%s\"*",
         "see_by": "%smenu %s",
         "categories_1": "You're viewing categories.",
-        "categories_2": "To check the commands inside a category, run *\"%smenu <category name>\"*.",
-        "help": "*|menu* displays all commands of this bot.\nThey are separated in categories, with each category containing it's own list of available commands.\n\nUsage:\n> ```|menu```\nDisplays all categories.\n\n> ```|menu <category name>```\nDisplays all commands inside a category.\n\n> ```|menu --all/-a```\nDisplays *all* commands in *all* categories in *one* message.¨"
+        "categories_2": "To check the commands inside a category, run *\"%smenu <category name>\"*."
     },
     "prefix": {
         "same_prefix": "You're trying to change the prefix of the bot globally to *%s*.",
@@ -97,8 +94,7 @@
         "changed_to_global_not_overriten": "Changed prefix from *%s* to *%s* globally.",
         "its": "My prefix in this group is *\"%s\"*.",
         "changed_to_reset_all_2": "Note that this only applies to groups that had a custom prefix - the bots default is still the same.",
-        "changed_to_global_not_overriten_2": "Note that this change only applies to groups without custom prefixes (which are not global). This group prefix was also changed to *%s*.",
-        "help": "*|prefix* changes the bot prefix, globally or for specific groups.\n\nUsage:\n> ```|prefix [new prefix]```\nChanges the prefix of the bot globally and in the group the command was ran on. (doesn't get changed in groups with a specific prefix which is not global)\n\n> ```|prefix [new prefix] --reset-all/-ra```\nChanges the prefix of the bot globally, and overrides *ALL* groups with a specific prefix which is not global to the new one.\n\n> ```|prefix --reset/-r```\nIn case the group this was run on has a custom prefix that is not the global one, this will revert it back to the global one.\n\n> ```|prefix [new prefix] --specific/-s```\nChanges the prefix of the bot *specifically for this group*, making the prefix *not global*.¨"
+        "changed_to_global_not_overriten_2": "Note that this change only applies to groups without custom prefixes (which are not global). This group prefix was also changed to *%s*."
     },
     "getprop": {
         "non_existent": "The property *%s* doesn't exist.",
@@ -107,7 +103,7 @@
     },
     "setprop": {
         "non_existent": "The property *%s* doesn't exist.",
-        "type_error": "The property *%s* is of type *%s*; and you tried to set it as *%s*, which is *incompatible*."
+        "type_error": "The property *%s* is of type *%s*. You tried to set it as *%s*, which is *incompatible*."
     },
     "play": {
         "play": "Play",
