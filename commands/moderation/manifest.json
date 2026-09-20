@@ -1,0 +1,9 @@
+{
+    "package": "moderation",
+    "commands": [
+        {
+            "file": "ban.js",
+            "aliases": ["ban"]
+        }
+    ]
+}

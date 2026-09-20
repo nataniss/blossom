@@ -40,6 +40,20 @@
     "generic": {
         "incorrect_syntax": "Incorrect syntax. Check *\"%shelp %s\"* for more info."
     },
+    "ban": {
+        "ban": "Ban",
+        "not_admin": "You're not a group administrator. You can't ban anyone.",
+        "no_action": "No action has been made.",
+        "bot_not_admin": "The bot has to be a group administrator to ban someone.",
+        "user": "user",
+        "users": "users",
+        "banned_success": "%s %s banned successfully!",
+        "bot_ban": "You can't ban the bot!",
+        "banned_failed": "Failed to ban user!",
+        "yourself_ban": "You can't ban yourself!",
+        "no_users": "To ban users, reply to someone's message or tag them.",
+        "user_is_group_creator": "This user is the group creator. I can't ban him."
+    },
     "not_found": {
         "good_morning": "Good morning, %s",
         "good_afternoon": "Good afternon, %s",
