@@ -7,6 +7,7 @@
     "yes": "Yes",
     "no": "No",
     "props": "props",
+    "number_format": "#%s",
     "prefix_message": "Prefix",
     "connected_to_wa": "Connected to WhatsApp!",
     "reconnecting": "Reconnecting...",
@@ -154,5 +155,24 @@
         "an_image": "an image",
         "not_static": "That sticker is not static. Try %s%s or %s%s with it.",
         "not_animated": "That sticker is not animated. Try %s%s with it."
+    },
+    "profile": {
+        "profile": "profile",
+        "your_info": "*Your info:*",
+        "name": "Name",
+        "bot_tag": "Bot tag",
+        "data_of_group": "*Data of group “%s”:*",
+        "xp": "XP",
+        "commands": "Commands sent",
+        "group_rank": "Rank in group",
+        "data_of_all_groups": "*Data for all groups:*",
+        "leveling_off": "⊘ Leveling off"
+    },
+    "rank": {
+        "rank": "Ranking",
+        "ranking_xp": "XP Rank",
+        "ranking_desc_xp": "Descending XP Rank",
+        "xp": "XP",
+        "leveling_off": "⊘ Leveling is off for this group."
     }
 }

@@ -1,0 +1,13 @@
+{
+    "package": "leveling",
+    "commands": [
+        {
+            "file": "profile.js",
+            "aliases": ["profile"]
+        },
+        {
+            "file": "ranks.js",
+            "aliases": ["rank"]
+        }
+    ]
+}

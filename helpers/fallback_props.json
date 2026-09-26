@@ -14,5 +14,22 @@
     "bot_name": {
         "type": "string",
         "fallback": "𝓫𝓵𝓸𝓼𝓼𝓸𝓶ᵇᵒᵗ"
+    },
+    "currency": {
+        "type": "string",
+        "fallback": "flora"
+    },
+    "currency_emoji": {
+        "type": "string",
+        "fallback": "🌸"
+    },
+    "currency_format": {
+        "type": "string",
+        "fallback": "%sƒ",
+        "regex": "^[^%]*(?:%[^s][^%]*)*%s[^%]*(?:%[^s][^%]*)*$"
+    },
+    "max_rank_entries": {
+        "type": "number",
+        "fallback": 10
     }
 }
