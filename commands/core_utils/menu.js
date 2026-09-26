@@ -36,7 +36,7 @@ function getMainCategories(ctx) {
 async function getCategory(categoryQuery, ctx) {
     if (!categoryQuery) return null;
 
-    const { getString, prefix, msg, sock, from } = ctx;
+    const { getString, prefix, msg, sock, from, } = ctx;
     const categoriesObj = menu_definitions.main.categories;
     const normalizedQuery = categoryQuery.trim().toLowerCase();
 
@@ -91,7 +91,51 @@ async function getCategory(categoryQuery, ctx) {
 }
 
 async function run(ctx) {
-    const { sock, from, msg, getString, args } = ctx;
+    const { sock, from, msg, getString, args, senderNumber, participants, getAdminStatus } = ctx;
+
+    if (args.length > 0) {
+        const categoryQuery = args[0];
+        const categoriesObj = menu_definitions.main.categories;
+
+        let foundCategoryKey = null;
+        for (const key of Object.keys(categoriesObj)) {
+            const translatedName = getString(`menu/${key}`);
+            if (
+                key.toLowerCase() === categoryQuery.trim().toLowerCase() ||
+                (translatedName && translatedName.toLowerCase() === categoryQuery.trim().toLowerCase())
+            ) {
+                foundCategoryKey = key;
+                break;
+            }
+        }
+
+
+        if (foundCategoryKey && categoriesObj[foundCategoryKey].needs_admin) {
+            const adminStatus = getAdminStatus(senderNumber, participants);
+
+            if (!adminStatus || (adminStatus !== 'admin' && adminStatus !== 'superadmin')) {
+                await sock.sendMessage(
+                    from,
+                    {
+                        react: {
+                            text: '❌',
+                            key: msg.key
+                        }
+                    }
+                );
+
+                await sock.sendMessage(from, {
+                    text: await decorate({
+                        emoji: "🧪",
+                        title: "menu",
+                        content: [{ type: "text", items: [getString("menu/attention_only_admins")] }]
+                    })
+                }, { quoted: msg });
+
+                return;
+            }
+        }
+    }
 
     if (args.length === 0) {
         await sock.sendMessage(
@@ -103,7 +147,6 @@ async function run(ctx) {
                 }
             }
         );
-
 
         await sock.sendMessage(from, {
             text: await decorate({
@@ -156,6 +199,4 @@ async function run(ctx) {
     }, { quoted: msg });
 }
 
-module.exports = {
-    run
-}
+module.exports = { run }

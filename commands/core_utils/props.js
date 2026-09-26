@@ -20,7 +20,17 @@ function parsePrimitive(value) {
 
 
 async function run(ctx) {
-    const { sock, from, msg, getString, cmd, args } = ctx;
+    const { senderNumber, sock, from, msg, getString, cmd, args, getOwnersList } = ctx;
+
+    if (!getOwnersList().includes(senderNumber)) {
+        if (args.length !== 1) return sock.sendMessage(from, {
+            text: await decorate({
+                emoji: "🎭",
+                title: getString("props"),
+                content: [{ type: "text", items: [getString("generic/not_owner")]}]
+            })
+        }, { quoted: msg })
+    }
 
     if (cmd === "getprop") {
         if (args.length !== 1) return sock.sendMessage(from, {

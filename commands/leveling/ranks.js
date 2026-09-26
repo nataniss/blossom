@@ -37,13 +37,13 @@ async function getContent(ctx) {
         return [];
     }
 
-let entries = Object.entries(profiles)
+    let entries = Object.entries(profiles)
         .map(([key, data]) => ({
             id: key,
             messages: data.messages ?? 0,
             username: data.username ?? key
         }))
-        .filter(user => user.messages > 0); // Adicionado para remover quem tem 0 mensagens
+        .filter(user => user.messages > 0);
 
     const isDescXp = args && args[0] === "desc:xp";
 

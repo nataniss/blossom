@@ -26,6 +26,34 @@ let has_started = false;
 
 let profiles = {};
 
+function getAdminStatus(senderNumber, participants) {
+    // senderNumber from ctx does not have @s.whatsapp at the end
+    const sender = participants.find(user => user.phoneNumber === senderNumber + "@s.whatsapp.net")
+
+    return sender?.admin ?? null
+}
+
+function getSenderJid(senderNumber, participants) {
+    // senderNumber from ctx does not have @s.whatsapp at the end
+    const sender = participants.find(user => user.phoneNumber === senderNumber + "@s.whatsapp.net")
+
+    return sender?.id ?? null
+}
+
+async function getBotAdminStatus(sock, participants) {
+    const bot_jid = sock.user.id.split(':')[0] + '@s.whatsapp.net'
+
+    const bot = participants.find(p => p.phoneNumber === bot_jid)
+
+    return bot?.admin ?? null
+}
+
+async function getBotJid(sock, participants) {
+    const bot_jid = sock.user.id.split(':')[0] + '@s.whatsapp.net'
+
+    return participants.find(p => p.phoneNumber === bot_jid) ?? null
+}
+
 async function loadProfiles() {
     const entries = await fsp.readdir(`./database/`, { withFileTypes: true });
 
@@ -302,6 +330,10 @@ async function loadConfig() {
 
 }
 
+function getOwnersList() {
+    return configuration.owners;
+}
+
 async function blossom() {
 
     await fsp.mkdir("./database/", { recursive: true });
@@ -557,7 +589,12 @@ async function blossom() {
             type: msg_type,
             senderNumber,
             participants,
-            prefix: activePrefix
+            prefix: activePrefix,
+            getBotAdminStatus,
+            getAdminStatus,
+            getBotJid,
+            getSenderJid,
+            getOwnersList
         };
         ctx.getString = getString;
 
@@ -582,6 +619,8 @@ async function blossom() {
 function getLanguage() {
     return configuration.language
 }
+
+
 
 blossom();
 

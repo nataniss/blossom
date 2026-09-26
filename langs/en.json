@@ -39,7 +39,8 @@
     "loading_fonts_done": "Done loading decorator fonts.",
     "all_done": "All done!",
     "generic": {
-        "incorrect_syntax": "Incorrect syntax. Check *\"%shelp %s\"* for more info."
+        "incorrect_syntax": "Incorrect syntax. Check *\"%shelp %s\"* for more info.",
+        "not_owner": "Only *assigned bot owners* can use this command."
     },
     "ban": {
         "ban": "Ban",
@@ -93,7 +94,9 @@
         "viewing_commands_of": "Viewing commands of category *\"%s\"*",
         "see_by": "%smenu %s",
         "categories_1": "You're viewing categories.",
-        "categories_2": "To check the commands inside a category, run *\"%smenu <category name>\"*."
+        "categories_2": "To check the commands inside a category, run *\"%smenu <category name>\"*.",
+        "attention_only_admins": "Only group administrators can view this category.",
+        "attention_only_owners": "Only group owners can view this category."
     },
     "prefix": {
         "same_prefix": "You're trying to change the prefix of the bot globally to *%s*.",

@@ -1,15 +1,11 @@
 const { decorate } = require("../../helpers/decorator.js")
-const { jidNormalizedUser } = require('@whiskeysockets/baileys');
 const util = require('util');
 
 async function run(ctx) {
-    const { sock, msg, from, getString, args, participants } = ctx;
+    const { sock, msg, from, getString, senderNumber, getBotAdminStatus, getSenderJid, getBotJid, getAdminStatus, args, participants } = ctx;
 
-    const bot_jid = sock.user.id.split(':')[0] + '@s.whatsapp.net'
-
-    const bot = participants.find(p => p.phoneNumber === bot_jid)
-
-    const is_bot_admin = bot?.admin === 'admin' || bot?.admin === 'superadmin'
+    const botAdmin = await getBotAdminStatus(sock, participants);
+    const is_bot_admin = botAdmin === 'admin' || botAdmin === 'superadmin';
 
     if (!is_bot_admin) {
 
@@ -41,11 +37,7 @@ async function run(ctx) {
         }, { quoted: msg })
     }
 
-    const sender_jid = msg.key.participant;
-
-    const sender = participants.find(user => user.id === sender_jid)
-
-    const sender_previligies = sender.admin ?? null
+    const sender_previligies = getAdminStatus(senderNumber, participants);
 
     if (sender_previligies == null) {
 
@@ -145,7 +137,7 @@ async function run(ctx) {
     for (const user of users_to_ban) {
         const user_data = participants.find(u => u.id === user)
 
-        if (user === bot?.id) {
+        if (user === getBotJid(sock, participants)) {
             if (users_to_ban.length == 1) {
                 await sock.sendMessage(
                     from,
@@ -178,7 +170,7 @@ async function run(ctx) {
             }
         }
 
-        if (user === sender_jid) {
+        if (user === getSenderJid(senderNumber, participants)) {
             if (users_to_ban.length == 1) {
                 await sock.sendMessage(
                     from,
@@ -211,76 +203,76 @@ async function run(ctx) {
             }
         }
 
-    if (user_data.admin === 'superadmin') {
-        if (users_to_ban.length > 1) {
-            continue
-        } else {
-            await sock.sendMessage(
-                from,
-                {
-                    react: {
-                        text: '❌',
-                        key: msg.key
-                    }
-                }
-            );
-
-            return await sock.sendMessage(from, {
-                text: await decorate({
-                    emoji: "⚖️",
-                    title: getString("ban/ban").toLowerCase(),
-                    content: [
-                        {
-                            type: "text",
-                            padding: 1,
-                            items: [
-                                `${getString("ban/user_is_group_creator")}`,
-                                `${getString("ban/no_action")}`
-                            ]
+        if (user_data.admin === 'superadmin') {
+            if (users_to_ban.length > 1) {
+                continue
+            } else {
+                await sock.sendMessage(
+                    from,
+                    {
+                        react: {
+                            text: '❌',
+                            key: msg.key
                         }
-                    ]
-                })
-            }, { quoted: msg })
-        }
-    } else {
-        try {
-            await sock.groupParticipantsUpdate(
-                from,
-                [user],
-                "remove"
-            );
-            successes++;
-        } catch {
-            // ignored
+                    }
+                );
+
+                return await sock.sendMessage(from, {
+                    text: await decorate({
+                        emoji: "⚖️",
+                        title: getString("ban/ban").toLowerCase(),
+                        content: [
+                            {
+                                type: "text",
+                                padding: 1,
+                                items: [
+                                    `${getString("ban/user_is_group_creator")}`,
+                                    `${getString("ban/no_action")}`
+                                ]
+                            }
+                        ]
+                    })
+                }, { quoted: msg })
+            }
+        } else {
+            try {
+                await sock.groupParticipantsUpdate(
+                    from,
+                    [user],
+                    "remove"
+                );
+                successes++;
+            } catch {
+                // ignored
+            }
         }
     }
-}
 
-if (successes >= 1) {
-    await sock.sendMessage(
-        from,
-        {
-            react: {
-                text: '✅️',
-                key: msg.key
+    if (successes >= 1) {
+        await sock.sendMessage(
+            from,
+            {
+                react: {
+                    text: '✅️',
+                    key: msg.key
+                }
             }
-        }
-    );
+        );
 
-    await sock.sendMessage(from, { text: `⚖️ ${util.format(getString("ban/banned_success"), successes, successes == 1 ? getString("ban/user") : getString("ban/users"))}` }, { quoted: msg })
-} else {
-    await sock.sendMessage(
-        from,
-        {
-            react: {
-                text: '❌',
-                key: msg.key
+        await sock.sendMessage(from, { text: `⚖️ ${util.format(getString("ban/banned_success"), successes, successes == 1 ? getString("ban/user") : getString("ban/users"))}` }, { quoted: msg })
+    } else {
+        await sock.sendMessage(
+            from,
+            {
+                react: {
+                    text: '❌',
+                    key: msg.key
+                }
             }
-        }
-    );
+        );
 
-    await sock.sendMessage(from, { text: `⚖️ ${getString("ban/banned_failed")}` }, { quoted: msg })
-}
+        await sock.sendMessage(from, { text: `⚖️ ${getString("ban/banned_failed")}` }, { quoted: msg })
+    }
 
 }
 
