@@ -19,13 +19,48 @@ const { select, input } = require('@inquirer/prompts');
 const fsp = require('node:fs/promises');
 const chalk = require('chalk');
 const util = require('util');
-const profile_mgr = require("./helpers/profile_manager")
 
 const GROUP_CACHE = new Map();
 
 let has_started = false;
 
-let profiles = profile_mgr.loadProfiles();
+let profiles = {};
+
+async function loadProfiles() {
+    const entries = await fsp.readdir(`./database/`, { withFileTypes: true });
+
+    const folderNames = entries
+        .filter(entry => entry.isDirectory() && entry.name.endsWith("@g.us"))
+        .map(entry => entry.name);
+
+    for (const folder of folderNames) {
+        profiles[folder] = {};
+
+        const profile_def = JSON.parse(await fsp.readFile(`./database/${folder}/profiles.json`, { encoding: 'utf8' }));
+        profiles[folder] = profile_def;
+    }
+
+    return profiles;
+}
+
+(async () => {
+    profiles = await loadProfiles();
+})();
+
+(function profileLoop() {
+    setTimeout(async () => {
+        await updateProfiles();
+        profileLoop();
+    }, 10000);
+})();
+
+async function updateProfiles() {
+    for (const gid of Object.keys(profiles)) {
+        await fsp.mkdir(`./database/${gid}/`, { recursive: true });
+
+        await fsp.writeFile(`./database/${gid}/profiles.json`, JSON.stringify(profiles[gid], null, 2));
+    }
+}
 
 async function getChatPrefix(from, defaultPrefix) {
     try {
@@ -209,6 +244,7 @@ let language = {};
 let language_default = {};
 
 let fonts = {};
+
 
 async function prepareStringPropData(index) {
     language = JSON.parse(
@@ -525,11 +561,9 @@ async function blossom() {
         };
         ctx.getString = getString;
 
-        profiles[from] = profiles[from] || {};
-
         await runMessageCommand(path.resolve("./helpers/on_message.js"), ctx);
 
-        await profile_mgr.saveProfiles(profiles);
+        await updateProfiles()
 
         if (!text.startsWith(activePrefix)) return;
 

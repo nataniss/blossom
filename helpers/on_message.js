@@ -6,13 +6,6 @@ const index = require("../index.js")
 async function run(ctx) {
     const { sock, from, msg, getString, text, senderNumber } = ctx;
 
-    index.profiles[from][senderNumber] = index.profiles[from][senderNumber] || { messages: 0, username: msg.pushName };
-
-    if (await getProp("leveling", false, from)) {
-        index.profiles[from][senderNumber].messages = (index.profiles[from][senderNumber].messages || 0) + 1;
-        console.log(index.profiles[from][senderNumber].messages)
-    }
-
     try {
         if (text.toLowerCase() === getString("prefix_message").toLowerCase()) {
             sock.sendMessage(from, {
@@ -25,6 +18,21 @@ async function run(ctx) {
         }
     } catch (e) {
         console.error(e)
+    }
+
+    if (!index.profiles[from]) {
+        index.profiles[from] = {};
+    }
+
+    if (!index.profiles[from][senderNumber]) {
+        index.profiles[from][senderNumber] = {
+            messages: 0,
+            username: msg.pushName || await getString("Unknown")
+        }
+    }
+
+    if (await getProp("leveling", false, from)) {
+        index.profiles[from][senderNumber].messages = (index.profiles[from][senderNumber].messages || 0) + 1
     }
 }
 
