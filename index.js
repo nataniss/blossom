@@ -55,7 +55,13 @@ async function getBotJid(sock, participants) {
 }
 
 async function loadProfiles() {
-    const entries = await fsp.readdir(`./database/`, { withFileTypes: true });
+
+    let entries;
+    if (fs.existsSync(`./database/)`)) {
+        entries = await fsp.readdir(`./database/`, { withFileTypes: true });
+    } else {
+        return {};
+    }
 
     const folderNames = entries
         .filter(entry => entry.isDirectory() && entry.name.endsWith("@g.us"))
@@ -64,8 +70,12 @@ async function loadProfiles() {
     for (const folder of folderNames) {
         profiles[folder] = {};
 
-        const profile_def = JSON.parse(await fsp.readFile(`./database/${folder}/profiles.json`, { encoding: 'utf8' }));
-        profiles[folder] = profile_def;
+        if (await fs.existsSync(`./database/${folder}/profiles.json`)) {
+            const profile_def = JSON.parse(await fsp.readFile(`./database/${folder}/profiles.json`, { encoding: 'utf8' }));
+            profiles[folder] = profile_def;
+        } else {
+            continue
+        }
     }
 
     return profiles;
@@ -77,6 +87,7 @@ async function loadProfiles() {
 
 (function profileLoop() {
     setTimeout(async () => {
+        console.log("Saved!!")
         await updateProfiles();
         profileLoop();
     }, 10000);
@@ -332,6 +343,10 @@ async function loadConfig() {
 
 function getOwnersList() {
     return configuration.owners;
+}
+
+function getDefaultPrefix() {
+    return configuration.default_prefix
 }
 
 async function blossom() {
@@ -594,7 +609,9 @@ async function blossom() {
             getAdminStatus,
             getBotJid,
             getSenderJid,
-            getOwnersList
+            getOwnersList,
+            getChatPrefix,
+            getDefaultPrefix
         };
         ctx.getString = getString;
 

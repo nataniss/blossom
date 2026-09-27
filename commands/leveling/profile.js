@@ -13,6 +13,10 @@ function getGroupPosition(targetKey, obj) {
     return index === -1 ? -1 : index + 1;
 }
 
+const formatIfDecimal = (num) => {
+  return num % 1 !== 0 ? num.toFixed(2) : num.toString();
+};
+
 async function run(ctx) {
     const { sock, from, msg, getString, senderNumber } = ctx;
 
@@ -21,7 +25,10 @@ async function run(ctx) {
 
     const values = {
         messages: (index.profiles[from][senderNumber].messages || 0),
+        xp: (index.profiles[from][senderNumber].xp || 0),
+        level: (index.profiles[from][senderNumber].level || 0),
         commands: (index.profiles[from][senderNumber].commands || 0),
+        prestige: (index.profiles[from][senderNumber].prestige || 0),
         currency_name: await getProp("currency", false, from),
         currency_emoji: await getProp("currency_emoji", false, from),
         currency_format: await getProp("currency_format"),
@@ -68,7 +75,27 @@ async function run(ctx) {
                     items: [
                         {
                             emoji: "⭐",
-                            text: `*${getString("profile/xp")}:* ${values.leveling ? values.messages : getString("profile/leveling_off")}`,
+                            text: `*${getString("profile/xp")}:* ${values.leveling ? formatIfDecimal(values.xp) : getString("profile/leveling_off")}`,
+                            list_item_type: "emoji_item"
+                        },
+                        {
+                            emoji: "🌟",
+                            text: `*${getString("profile/level")}:* ${values.leveling ? values.level : getString("profile/leveling_off")}`,
+                            list_item_type: "emoji_item"
+                        },
+                        {
+                            emoji: "🌠",
+                            text: `*${getString("profile/prestige")}:* ${values.leveling ? util.format(await getProp("prestige_point_format", false, from), values.prestige) : getString("profile/leveling_off")}`,
+                            list_item_type: "emoji_item"
+                        },
+                        {
+                            emoji: "🌠",
+                            text: `*${getString("profile/prestige_bonus")}:* ${values.leveling ? util.format(getString("profile/prestige_bonus_format"), ((values.prestige * 0.03) * 100)) : getString("profile/leveling_off")}`,
+                            list_item_type: "emoji_item"
+                        },
+                        {
+                            emoji: "💬",
+                            text: `*${getString("profile/messages")}:* ${values.leveling ? values.messages : getString("profile/leveling_off")}`,
                             list_item_type: "emoji_item"
                         },
                         {

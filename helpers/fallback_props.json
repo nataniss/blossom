@@ -31,5 +31,10 @@
     "max_rank_entries": {
         "type": "number",
         "fallback": 10
+    },
+    "prestige_point_format": {
+        "type": "string",
+        "fallback": "%s ✶",
+        "regex": "^[^%]*(?:%[^s][^%]*)*%s[^%]*(?:%[^s][^%]*)*$"
     }
 }
