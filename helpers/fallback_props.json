@@ -3,6 +3,10 @@
         "type": "boolean",
         "fallback": false
     },
+    "level_up_message": {
+        "type": "boolean",
+        "fallback": false
+    },
     "use_buttons": {
         "type": "boolean",
         "fallback": false
@@ -32,9 +36,8 @@
         "type": "number",
         "fallback": 10
     },
-    "prestige_point_format": {
-        "type": "string",
-        "fallback": "%s ✶",
-        "regex": "^[^%]*(?:%[^s][^%]*)*%s[^%]*(?:%[^s][^%]*)*$"
+    "level_points_goal": {
+        "type": "number",
+        "fallback": 100
     }
 }

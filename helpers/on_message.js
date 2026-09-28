@@ -4,8 +4,7 @@ const util = require('util');
 const index = require("../index.js")
 
 async function run(ctx) {
-    const { sock, from, msg, getString, text, senderNumber } = ctx;
-
+    const { sock, from, msg, getString, text, senderNumber, prefix } = ctx;
 
     try {
         if (text.toLowerCase() === getString("prefix_message").toLowerCase()) {
@@ -30,13 +29,8 @@ async function run(ctx) {
             messages: 0,
             username: msg.pushName,
             xp: 0,
-            level: 0,
-            prestige: 0
+            commands: 0
         }
-    }
-
-    if (!index.profiles[from][senderNumber].prestige) {
-        index.profiles[from][senderNumber].prestige = 0
     }
 
     if (!index.profiles[from][senderNumber].messages) {
@@ -47,69 +41,71 @@ async function run(ctx) {
         index.profiles[from][senderNumber].xp = 0
     }
 
-    if (!index.profiles[from][senderNumber].level) {
-        index.profiles[from][senderNumber].level = 0
+    if (!index.profiles[from][senderNumber].commands) {
+        index.profiles[from][senderNumber].xp = 0
     }
 
-        const prestige_warning = await decorate({
-        emoji: "🌠",
-        title: getString("prestige/prestige").toLowerCase(),
-        content: [{
-            type: "text", items: [
-                util.format(getString("prestige/warning_1"), msg.pushName, util.format(await getProp("prestige_point_format", false, from), index.profiles[from][senderNumber].level - 20)),
-                getString("prestige/warning_2"),
-                getString("prestige/warning_3"),
-                util.format(getString("prestige/warning_4"), getString("prestige/yes_message"))
-            ]
-        }]
-    })
+    index.profiles[from][senderNumber].messages = (index.profiles[from][senderNumber].messages || 0) + 1
 
-    const messageBody = msg.message;
-    if (!messageBody) return;
-
-    const messageType = Object.keys(messageBody)[0];
-    const contextInfo = messageBody[messageType]?.contextInfo;
-
-    if (contextInfo && contextInfo.quotedMessage) {
-
-        const quotedMsg = contextInfo.quotedMessage;
-        const quotedText = quotedMsg.conversation;
-
-        if (quotedText === prestige_warning && ctx.text === getString("prestige/yes_message")) {
-
-            if (index.profiles[from][senderNumber].level < 20) {
-                return
-            }
-            
-            index.profiles[from][senderNumber].prestige = index.profiles[from][senderNumber].prestige + (index.profiles[from][senderNumber].level - 20)
-            index.profiles[from][senderNumber].xp = 0
-            index.profiles[from][senderNumber].level = 0
-
-
-            await sock.sendMessage(from, {
-                text: await decorate({
-                    emoji: "🌠",
-                    title: getString("prestige/prestige").toLowerCase(),
-                    content: [{
-                        type: "text", items: [
-                            util.format(getString("prestige/done"), util.format(getProp("prestige_point_format"), index.profiles[from][senderNumber].level))
-                        ]
-                    }]
-                })
-            }, { quoted: msg })
-        }
+    if (text.trim().startsWith(prefix)) {
+        index.profiles[from][senderNumber].commands = (index.profiles[from][senderNumber].commands || 0) + 1
     }
 
     if (await getProp("leveling", false, from)) {
-        index.profiles[from][senderNumber].messages = (index.profiles[from][senderNumber].messages || 0) + 1
-        index.profiles[from][senderNumber].xp = (index.profiles[from][senderNumber].xp || 0) + (1 * (1 + (index.profiles[from][senderNumber].prestige * 0.03)))
+        previous_xp = (index.profiles[from][senderNumber].xp || 0)
+        index.profiles[from][senderNumber].xp = (index.profiles[from][senderNumber].xp || 0) + 1
 
-        if (index.profiles[from][senderNumber].xp >= (index.profiles[from][senderNumber].level + 1) * 50) {
-            index.profiles[from][senderNumber].level = index.profiles[from][senderNumber].level + 1
+        let points_goal = await getProp("level_points_goal", false, from)
+
+        if (await getProp("level_up_message", false, from) && Math.floor(previous_xp / points_goal) !== Math.floor((index.profiles[from][senderNumber].xp || 0) / points_goal)) {
+            await sock.sendMessage(from, {
+                text: await decorate({
+                    emoji: "🌟",
+                    title: getString("level_up/level_up").toLowerCase(),
+                    content: [
+                        {
+                            type: "text",
+                            padding_end: 1,
+                            items: [util.format(getString("level_up/message"), `@${senderNumber}`)]
+                        },
+                        {
+                            type: "list_complex",
+                            padding: 1,
+                            items: [
+                                {
+                                    emoji: "🏆",
+                                    text: `*${getString("level_up/level")}:* ${util.format(
+                                        getString("level_up/upgrade_format"),
+                                        Math.floor(previous_xp / points_goal),
+                                        Math.floor((index.profiles[from][senderNumber].xp || 0) / points_goal)
+                                    )}`,
+                                    list_item_type: "emoji_item"
+                                },
+                                {
+                                    emoji: "⭐",
+                                    text: `*${getString("level_up/xp")}:* ${util.format(
+                                        getString("level_up/upgrade_format"),
+                                        previous_xp,
+                                        (index.profiles[from][senderNumber].xp || 0)
+                                    )}`,
+                                    list_item_type: "emoji_item"
+                                }
+                            ]
+                        },
+                        {
+                            type: "text",
+                            padding_start: 1,
+                            items: [
+                                getString("level_up/footer"),
+                                util.format(getString("level_up/footer_2"), `${prefix}profile`)
+                            ]
+                        },
+                    ]
+                }),
+                mentions: [`${senderNumber}@s.whatsapp.net`]
+            }, { quoted: msg })
         }
     }
-
-    console.log(index.profiles)
 }
 
 module.exports = { run } 

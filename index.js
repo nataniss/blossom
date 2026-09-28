@@ -57,7 +57,7 @@ async function getBotJid(sock, participants) {
 async function loadProfiles() {
 
     let entries;
-    if (fs.existsSync(`./database/)`)) {
+    if (fs.existsSync('./database/')) {
         entries = await fsp.readdir(`./database/`, { withFileTypes: true });
     } else {
         return {};
@@ -81,25 +81,44 @@ async function loadProfiles() {
     return profiles;
 }
 
-(async () => {
-    profiles = await loadProfiles();
-})();
-
-(function profileLoop() {
-    setTimeout(async () => {
-        console.log("Saved!!")
-        await updateProfiles();
-        profileLoop();
-    }, 10000);
-})();
-
 async function updateProfiles() {
     for (const gid of Object.keys(profiles)) {
-        await fsp.mkdir(`./database/${gid}/`, { recursive: true });
+        const dir = `./database/${gid}/`;
+        const file = `${dir}profiles.json`;
 
-        await fsp.writeFile(`./database/${gid}/profiles.json`, JSON.stringify(profiles[gid], null, 2));
+        try {
+            await fsp.mkdir(dir, { recursive: true });
+
+            await fsp.writeFile(
+                file,
+                JSON.stringify(profiles[gid], null, 2),
+                { encoding: 'utf8' }
+            );
+
+        } catch (err) {
+            console.error(`Failed to save ${file}:`, err);
+        }
     }
 }
+
+(async () => {
+    profiles = await loadProfiles();
+
+    profileLoop();
+})();
+
+function profileLoop() {
+    setTimeout(async () => {
+        try {
+            await updateProfiles();
+        } catch (err) {
+            console.error("Error saving profiles:", err);
+        }
+
+        profileLoop();
+    }, 10000);
+}
+
 
 async function getChatPrefix(from, defaultPrefix) {
     try {

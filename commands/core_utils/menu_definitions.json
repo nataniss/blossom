@@ -85,7 +85,14 @@
         "commands": []
     },
     "moderation": {
-        "commands": []
+        "commands": [
+            {
+                "emoji": "⚖️",
+                "aliases": [
+                    "ban"
+                ]
+            }
+        ]
     },
     "bot": {
         "commands": [

@@ -40,18 +40,18 @@ async function getContent(ctx) {
     let entries = Object.entries(profiles)
         .map(([key, data]) => ({
             id: key,
-            messages: data.messages ?? 0,
+            xp: data.xp ?? 0,
             username: data.username ?? key
         }))
-        .filter(user => user.messages > 0);
+        .filter(user => user.xp > 0);
 
     const isDescXp = args && args[0] === "desc:xp";
 
     entries.sort((a, b) => {
         if (isDescXp) {
-            return a.messages - b.messages;
+            return a.xp - b.xp;
         } else {
-            return b.messages - a.messages;
+            return b.xp - a.xp;
         }
     });
 
@@ -59,6 +59,9 @@ async function getContent(ctx) {
 
     entries = entries.slice(0, max_entries);
 
+    const values = {
+        points_goal: await getProp("level_points_goal", false, from)
+    }
 
     content.push({
         type: "text",
@@ -84,7 +87,10 @@ async function getContent(ctx) {
         const titleText = `*${formattedPosition}:* ${user.username}`;
 
         const xpLabel = getString("rank/xp");
-        const xpText = `*${xpLabel}*: ${user.messages}`;
+        const xpText = `*${xpLabel}*: ${user.xp}`;
+
+        const levelLabel = getString("rank/level")
+        const levelText = `*${levelLabel}: ${Math.round(user.xp / values.points_goal)}*`
 
         listItems.push({
             emoji: emoji,
@@ -95,6 +101,12 @@ async function getContent(ctx) {
         listItems.push({
             emoji: "⭐",
             text: xpText,
+            list_item_type: "emoji_arrow"
+        });
+
+        listItems.push({
+            emoji: "🏆",
+            text: levelText,
             list_item_type: "emoji_arrow"
         });
     });

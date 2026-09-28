@@ -170,27 +170,24 @@
         "group_rank": "Rank in group",
         "data_of_all_groups": "*Data for all groups:*",
         "leveling_off": "⊘ Leveling off",
-        "prestige": "Prestige",
-        "prestige_bonus": "Prestige bonus",
-        "prestige_bonus_format": "+%s% XP",
         "messages": "Messages sent",
         "level": "Level"
     },
     "rank": {
         "rank": "Ranking",
+        "level": "Level",
         "ranking_xp": "XP Rank",
         "ranking_desc_xp": "Descending XP Rank",
         "xp": "XP",
         "leveling_off": "⊘ Leveling is off for this group."
     },
-    "prestige": {
-        "prestige": "Prestige",
-        "warning_1": "Hey *%s*, you are about to turn *all your levels and XP* into *%s (prestige points)*.",
-        "warning_2": "Every *prestige point* will give you a *stackable +3% bonus* in *gaining XP* in this group.",
-        "warning_3": "*HOWEVER, IF YOU DO THIS, ALL OF YOUR LEVELS AND XP IN THIS GROUP WILL BE RESET TO ZERO.*",
-        "warning_4": "*To avoid accidental loss*, respond to this message with *\"%s\"*. After you send it, *you'll get your prestige levels*.",
-        "yes_message": "Yes, I want to get my prestige points!",
-        "prestige_not_enough_levels": "To get prestige points, you need to be above *Level 20*.",
-        "done": "Done. You gained %s."
+    "level_up": {
+        "level_up": "Level Up",
+        "message": "Congratulations %s, you've leveled up!",
+        "level": "Level",
+        "xp": "XP",
+        "upgrade_format": "%s ➠ %s",
+        "footer": "Keep sending messages to gain more XP.",
+        "footer_2": "Use %s to view your profile."
     }
 }
