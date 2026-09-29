@@ -96,7 +96,7 @@
         "categories_1": "You're viewing categories.",
         "categories_2": "To check the commands inside a category, run *\"%smenu <category name>\"*.",
         "attention_only_admins": "Only group administrators can view this category.",
-        "attention_only_owners": "Only group owners can view this category."
+        "attention_only_owners": "Only bot owners can view this category."
     },
     "prefix": {
         "same_prefix": "You're trying to change the prefix of the bot globally to *%s*.",
@@ -189,5 +189,48 @@
         "upgrade_format": "%s ➠ %s",
         "footer": "Keep sending messages to gain more XP.",
         "footer_2": "Use %s to view your profile."
+    },
+    "close": {
+        "close": "Close group",
+        "not_admin": "You're not a group administrator. You can't close this group.",
+        "bot_not_admin": "The bot has to be a group administrator to close it.",
+        "success": "Group closed."
+    },
+    "open": {
+        "success": "Group open."
+    },
+    "promote": {
+        "promote": "Promote",
+        "not_admin": "You're not a group administrator. You can't promote anyone.",
+        "no_action": "No action has been made.",
+        "bot_not_admin": "The bot has to be a group administrator to promote someone.",
+        "user": "user",
+        "users": "users",
+        "success": "%s %s promoted successfully!",
+        "failed": "Failed to promote user!",
+        "yourself_promote": "You can't promote yourself!",
+        "no_users": "To promote users, reply to someone's message or tag them.",
+        "user_is_group_creator": "This user is the group creator. I can't promote him.",
+        "invalid_requirement": "I can't promote this user. This user is already a group administrator!"
+    },
+    "demote": {
+        "demote": "Demote",
+        "not_admin": "You're not a group administrator. You can't demote anyone.",
+        "no_action": "No action has been made.",
+        "bot_not_admin": "The bot has to be a group administrator to demote someone.",
+        "user": "user",
+        "users": "users",
+        "success": "%s %s demoted successfully!",
+        "failed": "Failed to demote user!",
+        "yourself_demote": "You can't demote yourself!",
+        "no_users": "To demote users, reply to someone's message or tag them.",
+        "user_is_group_creator": "This user is the group creator. I can't demote him.",
+        "invalid_requirement": "I can't demote this user. This user is already a normal member!"
+    },
+    "tagall": {
+        "tagall": "Tag All",
+        "not_admin": "You're not a group administrator. You can't tag everyone.",
+        "tag": "Tag message sent by %s",
+        "no_reason": "<no specified reason>"
     }
 }

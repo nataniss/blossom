@@ -33,6 +33,12 @@ function getAdminStatus(senderNumber, participants) {
     return sender?.admin ?? null
 }
 
+function getPhoneNumberFromJid(jid, participants) {
+    const sender = participants.find(user => user.id === jid)
+
+    return sender?.phoneNumber ?? null
+}
+
 function getSenderJid(senderNumber, participants) {
     // senderNumber from ctx does not have @s.whatsapp at the end
     const sender = participants.find(user => user.phoneNumber === senderNumber + "@s.whatsapp.net")
@@ -630,7 +636,8 @@ async function blossom() {
             getSenderJid,
             getOwnersList,
             getChatPrefix,
-            getDefaultPrefix
+            getDefaultPrefix,
+            getPhoneNumberFromJid
         };
         ctx.getString = getString;
 
@@ -649,6 +656,53 @@ async function blossom() {
         }
 
         await sock.sendPresenceUpdate('paused', from);
+    });
+
+    sock.ev.on('group-participants.update', async (update) => {
+        const { id, participants: affectedParticipants, action } = update;
+
+        const cachedData = GROUP_CACHE.get(id);
+
+        if (cachedData) {
+            let currentParticipants = [...cachedData.participants];
+
+            switch (action) {
+                case 'add':
+                    GROUP_CACHE.delete(id);
+                    break;
+
+                case 'remove':
+                    cachedData.participants = currentParticipants.filter(
+                        p => !affectedParticipants.includes(p.id)
+                    );
+                    cachedData.timestamp = Date.now();
+                    GROUP_CACHE.set(id, cachedData);
+                    break;
+
+                case 'promote':
+                    cachedData.participants = currentParticipants.map(p => {
+                        if (affectedParticipants.includes(p.id)) {
+                            return { ...p, admin: 'admin' };
+                        }
+                        return p;
+                    });
+                    cachedData.timestamp = Date.now();
+                    GROUP_CACHE.set(id, cachedData);
+                    break;
+
+                case 'demote':
+                    cachedData.participants = currentParticipants.map(p => {
+                        if (affectedParticipants.includes(p.id)) {
+                            return { ...p, admin: null };
+                        }
+                        return p;
+                    });
+                    cachedData.timestamp = Date.now();
+                    GROUP_CACHE.set(id, cachedData);
+                    break;
+            }
+        }
+        
     });
 }
 

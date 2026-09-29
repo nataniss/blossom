@@ -8,10 +8,6 @@
         {
             "file": "ranks.js",
             "aliases": ["rank"]
-        },
-        {
-            "file": "prestige.js",
-            "aliases": ["prestige"]
         }
     ]
 }

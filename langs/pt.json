@@ -6,6 +6,8 @@
     "owner_added": "Adicionado.",
     "yes": "Sim",
     "no": "Não",
+    "props": "props",
+    "number_format": "#%s",
     "prefix_message": "Prefixo",
     "connected_to_wa": "Conectado ao Whatsapp!",
     "reconnecting": "Reconectando...",
@@ -36,6 +38,24 @@
     "loading_fonts": "Carregando as fontes do decorador...",
     "loading_fonts_done": "Carregamento das fontes do decorador concluído.",
     "all_done": "Tudo pronto!",
+    "generic": {
+        "incorrect_syntax": "Sintaxe incorreta. Verifique *\"%shelp %s\"* para mais informações.",
+        "not_owner": "Somente os *proprietários deste bot* podem usar este comando."
+    },
+    "ban": {
+        "ban": "Ban",
+        "not_admin": "Você não é administrador do grupo. Você não pode banir ninguém.",
+        "no_action": "Nenhuma ação foi feita.",
+        "bot_not_admin": "O bot precisa ser administrador do grupo para banir alguém.",
+        "user": "usuário",
+        "users": "usuários",
+        "banned_success": "%s %s banidos com sucesso!",
+        "bot_ban": "Você não pode banir o bot!",
+        "banned_failed": "Falha ao banir usuário",
+        "yourself_ban": "Você não pode banir você mesmo!",
+        "no_users": "Para banir alguém, responda as suas mensagens ou as marque no comando.",
+        "user_is_group_creator": "Este é o criador do grupo. Não posso baní-lo."
+    },
     "not_found": {
         "good_morning": "Bom dia, %s",
         "good_afternoon": "Boa tarde, %s",
@@ -58,7 +78,10 @@
         "extremely_slow": "Muito lento"
     },
     "help": {
-        "help": "Ajuda"
+        "help": "Ajuda",
+        "command_doesnt_exist": "O comando solicitado não existe.",
+        "to_see_all_commands": "Veja todos os comandos com *%s*.",
+        "no_help": "Este comando não tem uma página de ajuda. Epa, neném!"
     },
     "menu": {
         "moderation": "Moderação",
@@ -67,11 +90,104 @@
         "group": "Grupo",
         "downloads": "Downloads",
         "leveling": "Pontuações",
+        "bot": "Bot",
+        "viewing_commands_of": "Vendo comandos da categoria *\"%s\"*",
         "see_by": "%smenu %s",
         "categories_1": "Você está vendo categorias.",
-        "categories_2": "Para ver os comandos dentro de uma categoria, rode *\"%smenu <nome da categoria>\"*."
+        "categories_2": "Para ver os comandos dentro de uma categoria, rode *\"%smenu <nome da categoria>\"*.",
+        "attention_only_admins": "Apenas administradores do grupo podem ver esta categoria.",
+        "attention_only_owners": "Apenas os donos do bot podem ver esta categoria."
     },
     "prefix": {
-        "its": "O meu prefixo neste grupo é *\"%s\"*."
+        "same_prefix": "Você está tentando alterar o prefixo do bot globalmente para *%s*.",
+        "same_prefix2": "O prefixo global *já é %s*. Nenhuma alteração foi feita.",
+        "same_prefix_not_global": "Você está tentando alterar o prefixo deste grupo para *%s*.",
+        "same_prefix2_not_global": "O prefixo *já é %s*. Nenhuma alteração foi feita.",
+        "changed_to_not_global": "Prefixo alterado de *%s* para *%s* *apenas para este grupo*.",
+        "changed_to_reset": "Prefixo redefinido de *%s* para *%s* *apenas para este grupo*.",
+        "changed_to_reset_generic": "Prefixo redefinido para *%s* *apenas para este grupo*.",
+        "changed_to_reset_all": "Prefixo redefinido para *%s* *globalmente*.",
+        "changed_to_reset_all_not_specific": "O prefixo foi redefinido para o padrão do bot em *todos os grupos que possuíam prefixos personalizados*.",
+        "changed_to_not_global_2": "Observe que apenas *esse grupo* terá seu prefixo alterado, e os demais manterão o próprio.",
+        "changed_to_global_not_overriten": "Prefixo alterado de *%s* para *%s* globalmente.",
+        "its": "O meu prefixo neste grupo é *\"%s\"*.",
+        "changed_to_reset_all_2": "Observe que isso se aplica apenas aos grupos que tinham um prefixo personalizado - o padrão do bot continua o mesmo.",
+        "changed_to_global_not_overriten_2": "Observe que essa alteração se aplica apenas a grupos sem prefixos personalizados (que não são globais). O prefixo desse grupo também foi alterado para *%s*."
+    },
+    "getprop": {
+        "non_existent": "A propriedade *%s* não existe.",
+        "global_prop": "Propriedade global: *%s*",
+        "local_prop": "Propriedade neste grupo: *%s*"
+    },
+    "setprop": {
+        "non_existent": "A propriedade *%s* não existe.",
+        "type_error": "A propriedade *%s* é do tipo *%s*. Você está tentando mudá-la para *%s*, que não é *compatível*."
+    },
+    "play": {
+        "play": "Play",
+        "title": "Título",
+        "duration": "Duração",
+        "author": "Autor",
+        "views": "Visualizações",
+        "likes": "Curtidas",
+        "uploaded": "Postado",
+        "description": "Descrição",
+        "by": "Feito por %s:",
+        "download_audio": "╰┈➤ Baixar áudio",
+        "download_video": "╰┈➤ Baixar vídeo",
+        "download_as_audio": "Enviar como áudio...",
+        "download_as_video": "Enviar como vídeo...",
+        "other_vids": "Outros vídeos",
+        "enhanced_footer": "Não é este o vídeo que está procurando? Presione \"Outros vídeos\" abaixo para selecionar outro para download.",
+        "downloading": "Baixando, aguarde!",
+        "no_binaries_found": "Binários necessários não encontrados! Para usar este comando, instale o ```ffmpeg``` e o ```yt-dlp```. Desligue o bot, instale os programas certificando-se de que eles estejam na variável de ambiente PATH e reinicie o bot."
+    },
+    "sticker": {
+        "sticker": "Figurinha",
+        "duration_not_permitted": "O arquivo de entrada deve ser menor que 9.9 segundos!",
+        "error_compressing": "Erro ao comprimir a figurinha!",
+        "error_adding_sticker": "Erro ao adicionar metadata à figurinha!",
+        "error_no_input": "Responda ou envie qualquer foto, vídeo ou GIF com %s%s para transformá-lo em uma figurinha.",
+        "no_binaries_found": "Binários necessários não encontrados! Para usar este comando, instale o ```ffmpeg```. Desligue o bot, instale os programas certificando-se de que eles estejam na variável de ambiente PATH e reinicie o bot."
+    },
+    "sticker_convert": {
+        "please_wait": "Por favor espere, converter uma figurinha em %s demora um tempo.",
+        "error_no_input": "Responda a qualquer figuinha com %s%s para transformá-la em %s.",
+        "a_gif": "um GIF",
+        "a_video": "um vídeo",
+        "an_image": "uma foto",
+        "not_static": "Esta figurinha não é estática. Use %s%s ou %s%s nela.",
+        "not_animated": "Esta figurinha não é animada. Use %s%s com ela."
+    },
+    "profile": {
+        "profile": "Perfil",
+        "your_info": "*Suas informações:*",
+        "name": "Nome",
+        "bot_tag": "Etiqueta do bot",
+        "data_of_group": "*Dados no grupo “%s”:*",
+        "xp": "XP",
+        "commands": "Comandos enviados",
+        "group_rank": "Rank no grupo",
+        "data_of_all_groups": "*Dados para todos os grupos:*",
+        "leveling_off": "⊘ Pontuações desativadas",
+        "messages": "Mensagens enviadas",
+        "level": "Nível"
+    },
+    "rank": {
+        "rank": "Ranking",
+        "level": "Nível",
+        "ranking_xp": "Rank de XP",
+        "ranking_desc_xp": "Rank de XP descendente",
+        "xp": "XP",
+        "leveling_off": "⊘ As pontuações estão desativadas neste grupo."
+    },
+    "level_up": {
+        "level_up": "Subiu de nível",
+        "message": "Parabéns %s, você subiu de nível!",
+        "level": "Nível",
+        "xp": "XP",
+        "upgrade_format": "%s ➠ %s",
+        "footer": "Continue mandando mensagens para ganhar mais XP.",
+        "footer_2": "Use %s para abrir o seu perfil."
     }
 }
