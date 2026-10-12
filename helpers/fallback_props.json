@@ -19,6 +19,10 @@
         "type": "string",
         "fallback": "𝓫𝓵𝓸𝓼𝓼𝓸𝓶ᵇᵒᵗ"
     },
+    "bot_version": {
+        "type": "string",
+        "fallback": "1.0"
+    },
     "currency": {
         "type": "string",
         "fallback": "flora"
@@ -39,5 +43,18 @@
     "level_points_goal": {
         "type": "number",
         "fallback": 100
+    },
+    "colored_quote_profile_picture": {
+        "type": "boolean",
+        "fallback": false
+    },
+    "quote_profile_picture_fallback": {
+        "type": "string",
+        "fallback": "https://i.postimg.cc/nhx3qNnX/meme-312-grumpy-cat-gerador-de-memes.jpg",
+        "regex": "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,63}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$"
+    },
+    "can_members_use_@all": {
+        "type": "boolean",
+        "fallback": true
     }
 }

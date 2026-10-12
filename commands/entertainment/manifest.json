@@ -1,0 +1,9 @@
+{
+    "package": "entertainment",
+    "commands": [
+        {
+            "file": "quote.js",
+            "aliases": [ "quote" ]
+        }
+    ]
+}

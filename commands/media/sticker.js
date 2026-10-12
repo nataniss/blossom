@@ -239,25 +239,27 @@ async function run(ctx) {
     } = ctx;
 
     if (!isCommandAvailable("ffmpeg")) {
-        await sock.sendMessage(from, {
-            react: {
-                text: "❌",
-                key: msg.key
-            }
-        });
+        return await Promise.all([
+            sock.sendMessage(from, {
+                react: {
+                    text: "❌",
+                    key: msg.key
+                }
+            }),
 
-        return await sock.sendMessage(from, {
-            text: await decorate({
-                emoji: "🖼️",
-                title: getString("sticker/sticker").toLowerCase(),
-                content: [{
-                    type: "text",
-                    items: [getString("sticker/no_binaries_found")]
-                }]
+            sock.sendMessage(from, {
+                text: await decorate({
+                    emoji: "🖼️",
+                    title: getString("sticker/sticker").toLowerCase(),
+                    content: [{
+                        type: "text",
+                        items: [getString("sticker/no_binaries_found")]
+                    }]
+                })
+            }, {
+                quoted: msg
             })
-        }, {
-            quoted: msg
-        });
+        ])
     }
 
     const messageType = Object.keys(msg.message)[0];
@@ -307,24 +309,25 @@ async function run(ctx) {
     }
 
     if (!mediaMessage || !mediaMessagePayload) {
-        await sock.sendMessage(from, {
-            react: {
-                text: "❌",
-                key: msg.key
-            }
-        });
+        return await Promise.all([
+            sock.sendMessage(from, {
+                react: {
+                    text: "❌",
+                    key: msg.key
+                }
+            }),
 
-        await sock.sendMessage(from, {
-            text: `❌ ${util.format(
-                getString("sticker/error_no_input"),
-                ctx.prefix,
-                ctx.cmd
-            )}`
-        }, {
-            quoted: msg
-        });
+            sock.sendMessage(from, {
+                text: `❌ ${util.format(
+                    getString("sticker/error_no_input"),
+                    ctx.prefix,
+                    ctx.cmd
+                )}`
+            }, {
+                quoted: msg
+            })
 
-        return;
+        ])
     }
 
     await sock.sendMessage(from, {
@@ -362,20 +365,20 @@ async function run(ctx) {
             const duration = await getMediaDuration(before);
 
             if (duration !== null && duration > 9.9) {
-                await sock.sendMessage(from, {
-                    react: {
-                        text: "❌",
-                        key: msg.key
-                    }
-                });
+                return await Promise.all([
+                    sock.sendMessage(from, {
+                        react: {
+                            text: "❌",
+                            key: msg.key
+                        }
+                    }),
 
-                await sock.sendMessage(from, {
-                    text: `❌ ${await getString("sticker/duration_not_permitted")}`
-                }, {
-                    quoted: msg
-                });
-
-                return;
+                    sock.sendMessage(from, {
+                        text: `❌ ${await getString("sticker/duration_not_permitted")}`
+                    }, {
+                        quoted: msg
+                    })
+                ])
             }
         }
 
@@ -388,20 +391,22 @@ async function run(ctx) {
         });
 
         if (webpBuffer.length >= maxBytes) {
-            await sock.sendMessage(from, {
-                react: {
-                    text: "❌",
-                    key: msg.key
-                }
-            });
+            return await Promise.all([
+                sock.sendMessage(from, {
+                    react: {
+                        text: "❌",
+                        key: msg.key
+                    }
+                }),
 
-            await sock.sendMessage(from, {
-                text: `❌ ${getString("sticker/error_compressing")}`
-            }, {
-                quoted: msg
-            });
+                sock.sendMessage(from, {
+                    text: `❌ ${getString("sticker/error_compressing")}`
+                }, {
+                    quoted: msg
+                })
 
-            return;
+            ])
+
         }
 
         const attachGroupName = await getProp(
@@ -431,40 +436,46 @@ async function run(ctx) {
             }
         );
 
+
         if (stickerBuffer.length >= maxBytes) {
-            await sock.sendMessage(from, {
-                react: {
-                    text: "❌",
-                    key: msg.key
-                }
-            });
+            return await Promise.all([
+                sock.sendMessage(from, {
+                    react: {
+                        text: "❌",
+                        key: msg.key
+                    }
+                }),
 
-            await sock.sendMessage(from, {
-                text: `❌ ${getString("sticker/error_adding_exif")}`
-            }, {
-                quoted: msg
-            });
+                sock.sendMessage(from, {
+                    text: `❌ ${getString("sticker/error_adding_exif")}`
+                }, {
+                    quoted: msg
+                })
 
-            return;
+            ]
+            )
         }
 
-        await sock.sendMessage(from, {
-            react: {
-                text: "✅",
-                key: msg.key
-            }
-        });
+        await Promise.all([
+            sock.sendMessage(from, {
+                react: {
+                    text: "✅",
+                    key: msg.key
+                }
+            }),
 
-        await sock.sendMessage(
-            from,
-            {
-                sticker: stickerBuffer,
-                isAnimated
-            },
-            {
-                quoted: msg
-            }
-        );
+            sock.sendMessage(
+                from,
+                {
+                    sticker: stickerBuffer,
+                    isAnimated
+                },
+                {
+                    quoted: msg
+                }
+            )
+        ])
+
     } finally {
         await rm(`./${before}`, {
             force: true

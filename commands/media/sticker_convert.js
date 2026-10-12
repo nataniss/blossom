@@ -84,6 +84,7 @@ async function downloadandSendSticker(quotedMessageStructure, ctx) {
             });
         } else {
             try {
+                
                 await sock.sendMessage(from, {
                     text: `⌛️ ${util.format(getString("sticker_convert/please_wait"), (cmd == "togif") ? getString("sticker_convert/a_gif") : getString("sticker_convert/a_video"))}`
                 }, {
@@ -91,18 +92,21 @@ async function downloadandSendSticker(quotedMessageStructure, ctx) {
                 });
 
                 const stream_out = await convertWebPToMP4(stream);
-
-                await sock.sendMessage(from, {
+                
+                await Promise.all([
+                sock.sendMessage(from, {
                     react: {
                         text: "✅",
                         key: msg.key
                     }
-                });
+                }),
 
-                await sock.sendMessage(from, {
+                sock.sendMessage(from, {
                     video: stream_out,
                     gifPlayback: (cmd == "togif")
-                }, { quoted: msg });
+                }, { quoted: msg })
+            ]);
+            
             } catch (error) {
                 await sock.sendMessage(from, {
                     react: {

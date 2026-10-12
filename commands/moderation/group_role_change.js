@@ -18,11 +18,17 @@ async function run(ctx) {
                 title: getString(`${cmd}/${cmd}`).toLowerCase(),
                 content: [
                     {
-                        type: "text",
+                        type: "list_complex",
                         padding: 1,
                         items: [
-                            `${getString(`${cmd}/bot_not_admin`)}`,
-                            `${getString(`${cmd}/no_action`)}`
+                            {
+                                text: `${getString(`${cmd}/bot_not_admin`)}`,
+                                list_item_type: "simple_item"
+                            },
+                            {
+                                text: `${getString(`${cmd}/no_action`)}`,
+                                list_item_type: "simple_item"
+                            }
                         ]
                     }
                 ]
@@ -41,11 +47,17 @@ async function run(ctx) {
                 title: getString(`${cmd}/${cmd}`).toLowerCase(),
                 content: [
                     {
-                        type: "text",
+                        type: "list_complex",
                         padding: 1,
                         items: [
-                            `${getString(`${cmd}/not_admin`)}`,
-                            `${getString(`${cmd}/no_action`)}`
+                            {
+                                text: `${getString(`${cmd}/not_admin`)}`,
+                                list_item_type: "simple_item"
+                            },
+                            {
+                                text: `${getString(`${cmd}/no_action`)}`,
+                                list_item_type: "simple_item"
+                            }
                         ]
                     }
                 ]
@@ -87,11 +99,17 @@ async function run(ctx) {
                 title: getString(`${cmd}/${cmd}`).toLowerCase(),
                 content: [
                     {
-                        type: "text",
+                        type: "list_complex",
                         padding: 1,
                         items: [
-                            `${getString(`${cmd}/no_users`)}`,
-                            `${getString(`${cmd}/no_action`)}`
+                            {
+                                text: `${getString(`${cmd}/no_users`)}`,
+                                list_item_type: "simple_item"
+                            },
+                            {
+                                text: `${getString(`${cmd}/no_action`)}`,
+                                list_item_type: "simple_item"
+                            }
                         ]
                     }
                 ]
@@ -114,11 +132,17 @@ async function run(ctx) {
                         title: getString(`${cmd}/${cmd}`).toLowerCase(),
                         content: [
                             {
-                                type: "text",
+                                type: "list_complex",
                                 padding: 1,
                                 items: [
-                                    `${getString(`${cmd}/bot_ban`)}`,
-                                    `${getString(`${cmd}/no_action`)}`
+                                    {
+                                        text: `${getString(`${cmd}/bot_ban`)}`,
+                                        list_item_type: "simple_item"
+                                    },
+                                    {
+                                        text: `${getString(`${cmd}/no_action`)}`,
+                                        list_item_type: "simple_item"
+                                    }
                                 ]
                             }
                         ]
@@ -139,11 +163,17 @@ async function run(ctx) {
                         title: getString(`${cmd}/${cmd}`).toLowerCase(),
                         content: [
                             {
-                                type: "text",
+                                type: "list_complex",
                                 padding: 1,
                                 items: [
-                                    `${getString(`${cmd}/yourself_${cmd}`)}`,
-                                    `${getString(`${cmd}/no_action`)}`
+                                    {
+                                        text: `${getString(`${cmd}/yourself_${cmd}`)}`,
+                                        list_item_type: "simple_item"
+                                    },
+                                    {
+                                        text: `${getString(`${cmd}/no_action`)}`,
+                                        list_item_type: "simple_item"
+                                    }
                                 ]
                             }
                         ]
@@ -163,7 +193,6 @@ async function run(ctx) {
             }
         }
 
-        // Ignorar 'superadmin' (criador do grupo)
         if (user_data.admin === 'superadmin') {
             if (users_to_change_role.length > 1) {
                 continue;
@@ -176,11 +205,17 @@ async function run(ctx) {
                         title: getString(`${cmd}/${cmd}`).toLowerCase(),
                         content: [
                             {
-                                type: "text",
+                                type: "list_complex",
                                 padding: 1,
                                 items: [
-                                    `${getString(`${cmd}/user_is_group_creator`)}`,
-                                    `${getString(`${cmd}/no_action`)}`
+                                    {
+                                        text: `${getString(`${cmd}/user_is_group_creator`)}`,
+                                        list_item_type: "simple_item"
+                                    },
+                                    {
+                                        text: `${getString(`${cmd}/no_action`)}`,
+                                        list_item_type: "simple_item"
+                                    }
                                 ]
                             }
                         ]
@@ -204,11 +239,17 @@ async function run(ctx) {
                         title: getString(`${cmd}/${cmd}`).toLowerCase(),
                         content: [
                             {
-                                type: "text",
+                                type: "list_complex",
                                 padding: 1,
                                 items: [
-                                    `${getString(`${cmd}/invalid_requirement`)}`,
-                                    `${getString(`${cmd}/no_action`)}`
+                                    {
+                                        text: `${getString(`${cmd}/invalid_requirement`)}`,
+                                        list_item_type: "simple_item"
+                                    },
+                                    {
+                                        text: `${getString(`${cmd}/no_action`)}`,
+                                        list_item_type: "simple_item"
+                                    }
                                 ]
                             }
                         ]

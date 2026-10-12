@@ -83,7 +83,9 @@ async function run(ctx) {
         from,
         msg,
         getString,
-        args
+        cmd,
+        args,
+        prefix
     } = ctx;
     if (!isCommandAvailable("yt-dlp") || !isCommandAvailable("ffmpeg")) {
 
@@ -107,10 +109,43 @@ async function run(ctx) {
             quoted: msg
         });
     }
+
     const query = args.join(" ").trim();
+
     if (!query) {
-        return;
+        await sock.sendMessage(from, {
+            react: {
+                text: "❌",
+                key: msg.key
+            }
+        });
+
+        return await sock.sendMessage(from, { text: await decorate({
+            emoji: "🎵",
+            title: getString("play/play").toLowerCase(),
+            content: [
+                {
+                    type: "list_complex",
+                    padding: 1,
+                    items: [
+                        {
+                            text: `${getString(`play/no_query`)}`,
+                            list_item_type: "simple_item"
+                        },
+                        {
+                            text: `${util.format(getString(`play/example`), prefix, cmd, getString("play/example_song"))}`,
+                            list_item_type: "simple_item"
+                        },
+                        {
+                            text: `${util.format(getString(`play/example`), prefix, cmd, getString("play/example_link"))}`,
+                            list_item_type: "simple_item"
+                        }
+                    ]
+                }
+            ]
+        }) }, { quoted: msg } );
     }
+
     const youtubeRegex = /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((?:\w|-){11})(?:\S+)?$/;
     const useButtons = useEnhanced && (await getProp("use_buttons", false, from) === true);
     if (youtubeRegex.test(query)) {
@@ -137,6 +172,14 @@ async function run(ctx) {
             if (stderr && !stdout) {
                 throw new Error(stderr);
             }
+
+            await sock.sendMessage(from, {
+                react: {
+                    text: "✅️",
+                    key: msg.key
+                }
+            });
+            
             if (ctx.cmd === "play_video") {
                 await sock.sendMessage(from, {
                     video: {

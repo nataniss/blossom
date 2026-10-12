@@ -25,11 +25,17 @@ async function run(ctx) {
                 title: getString("ban/ban").toLowerCase(),
                 content: [
                     {
-                        type: "text",
+                        type: "list_complex",
                         padding: 1,
                         items: [
-                            `${getString("ban/bot_not_admin")}`,
-                            `${getString("ban/no_action")}`
+                            {
+                                text: `${getString("ban/bot_not_admin")}`,
+                                list_item_type: "simple_item"
+                            },
+                            {
+                                text: `${getString("ban/no_action")}`,
+                                list_item_type: "simple_item"
+                            }
                         ]
                     }
                 ]
@@ -57,11 +63,17 @@ async function run(ctx) {
                 title: getString("ban/ban").toLowerCase(),
                 content: [
                     {
-                        type: "text",
+                        type: "list_complex",
                         padding: 1,
                         items: [
-                            `${getString("ban/not_admin")}`,
-                            `${getString("ban/no_action")}`
+                            {
+                                text: `${getString("ban/not_admin")}`,
+                                list_item_type: "simple_item"
+                            },
+                            {
+                                text: `${getString("ban/no_action")}`,
+                                list_item_type: "simple_item"
+                            }  
                         ]
                     }
                 ]
@@ -120,11 +132,17 @@ async function run(ctx) {
                 title: getString("ban/ban").toLowerCase(),
                 content: [
                     {
-                        type: "text",
+                        type: "list_complex",
                         padding: 1,
                         items: [
-                            `${getString("ban/no_users")}`,
-                            `${getString("ban/no_action")}`
+                            {
+                                text: `${getString("ban/no_users")}`,
+                                list_item_type: "simple_item"
+                            },
+                            {
+                                text: `${getString("ban/no_action")}`,
+                                list_item_type: "simple_item"
+                            }   
                         ]
                     }
                 ]
@@ -155,15 +173,21 @@ async function run(ctx) {
                         title: getString("ban/ban").toLowerCase(),
                         content: [
                             {
-                                type: "text",
+                                type: "list_complex",
                                 padding: 1,
                                 items: [
-                                    `${getString("ban/bot_ban")}`,
-                                    `${getString("ban/no_action")}`
+                                    {
+                                        text: `${getString("ban/bot_ban")}`,
+                                        list_item_type: "simple_item"
+                                    },
+                                    {
+                                        text: `${getString("ban/no_action")}`,
+                                        list_item_type: "simple_item"
+                                    }   
                                 ]
                             }
                         ]
-                    })
+                })
                 }, { quoted: msg })
             } else {
                 continue
@@ -188,11 +212,17 @@ async function run(ctx) {
                         title: getString("ban/ban").toLowerCase(),
                         content: [
                             {
-                                type: "text",
+                                type: "list_complex",
                                 padding: 1,
                                 items: [
-                                    `${getString("ban/yourself_ban")}`,
-                                    `${getString("ban/no_action")}`
+                                    {
+                                        text: `${getString("ban/yourself_ban")}`,
+                                        list_item_type: "simple_item"
+                                    },
+                                    {
+                                        text: `${getString("ban/no_action")}`,
+                                        list_item_type: "simple_item"
+                                    }   
                                 ]
                             }
                         ]
@@ -223,11 +253,17 @@ async function run(ctx) {
                         title: getString("ban/ban").toLowerCase(),
                         content: [
                             {
-                                type: "text",
+                                type: "list_complex",
                                 padding: 1,
                                 items: [
-                                    `${getString("ban/user_is_group_creator")}`,
-                                    `${getString("ban/no_action")}`
+                                    {
+                                        text: `${getString("ban/user_is_group_creator")}`,
+                                        list_item_type: "simple_item"
+                                    },
+                                    {
+                                        text: `${getString("ban/no_action")}`,
+                                        list_item_type: "simple_item"
+                                    }   
                                 ]
                             }
                         ]

@@ -1,7 +1,7 @@
 {
+    "language_code": "pt",
     "language": "Português",
     "bot_name": "Blossom Bot",
-    "bot_version": "1.0",
     "owner_add": "O número atual (%s) que o bot está conectado não está na lista de donos.\nDeseja adicionar este número a lista de donos? (bot_config.json)",
     "owner_added": "Adicionado.",
     "yes": "Sim",
@@ -96,7 +96,27 @@
         "categories_1": "Você está vendo categorias.",
         "categories_2": "Para ver os comandos dentro de uma categoria, rode *\"%smenu <nome da categoria>\"*.",
         "attention_only_admins": "Apenas administradores do grupo podem ver esta categoria.",
-        "attention_only_owners": "Apenas os donos do bot podem ver esta categoria."
+        "attention_only_owners": "Apenas os donos do bot podem ver esta categoria.",
+        "group_role": "Cargo",
+        "bot_name": "Nome do bot",
+        "bot_version": "Versão do bot",
+        "time": "Hora",
+        "date": "Data",
+        "bot_uptime": "Tempo de atividade",
+        "member": "Membro",
+        "admin": "Administrator do Grupo",
+        "creator": "Criador do grupo",
+        "select_category_no_btns": "Digite *%smenu <nome da categoria> para selecionar uma categoria e ver os seus comandos.*",
+        "select_a_category": "Selecionar uma categoria",
+        "footer": "Aperte no botão abaixo para selecionar uma categoria e ver os seus comandos.",
+        "categories": "Lista de categorias",
+        "moderation_description": "Ferramentas para administradores do grupo.",
+        "utilities_description": "Ferramentas gerais do dia-a-dia.",
+        "entertainment_description": "Ferramentas para trazer engajamento ao grupo.",
+        "group_description": "Ferrametas para dar informações sobre o grupo.",
+        "downloads_description": "Ferramentas que fazem download de serviços externos.",
+        "leveling_description": "Ferramentas relacionadas a perfis, economia e níveis do bot.",
+        "bot_description": "Ferramentas relacionadas ao funcionamento e/ou estado do bot."
     },
     "prefix": {
         "same_prefix": "Você está tentando alterar o prefixo do bot globalmente para *%s*.",
@@ -138,9 +158,13 @@
         "download_as_audio": "Enviar como áudio...",
         "download_as_video": "Enviar como vídeo...",
         "other_vids": "Outros vídeos",
-        "enhanced_footer": "Não é este o vídeo que está procurando? Presione \"Outros vídeos\" abaixo para selecionar outro para download.",
+        "enhanced_footer": "Toque em uma opção abaixo para escolher como você irá fazer o download. Não é este o vídeo que está procurando? Aperte \"Outros vídeos\" abaixo para selecionar outro para download.",
         "downloading": "Baixando, aguarde!",
-        "no_binaries_found": "Binários necessários não encontrados! Para usar este comando, instale o ```ffmpeg``` e o ```yt-dlp```. Desligue o bot, instale os programas certificando-se de que eles estejam na variável de ambiente PATH e reinicie o bot."
+        "no_binaries_found": "Binários necessários não encontrados! Para usar este comando, instale o ```ffmpeg``` e o ```yt-dlp```. Desligue o bot, instale os programas certificando-se de que eles estejam na variável de ambiente PATH e reinicie o bot.",
+        "no_query": "Nenhum termo dado. Você deve inserir ou um URL de um vídeo do YouTube ou um termo de pesquisa.",
+        "example": "*Exemplo:* ```%s%s %s```",
+        "example_song": "ariiol - typing",
+        "example_link": "https://youtu.be/3UJZ8CndI8Y?si=aPTSEICF4xyH2fZh"
     },
     "sticker": {
         "sticker": "Figurinha",

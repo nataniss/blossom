@@ -52,7 +52,14 @@
         ]
     },
     "entertainment": {
-        "commands": []
+        "commands": [
+            {
+                "emoji": "💬",
+                "aliases": [
+                    "quote"
+                ]
+            }
+        ]
     },
     "downloads": {
         "commands": [
@@ -90,6 +97,36 @@
                 "emoji": "⚖️",
                 "aliases": [
                     "ban"
+                ]
+            },
+            {
+                "emoji": "📢",
+                "aliases": [
+                    "tagall"
+                ]
+            },
+            {
+                "emoji": "🔒",
+                "aliases": [
+                    "close"
+                ]
+            },
+            {
+                "emoji": "🔓",
+                "aliases": [
+                    "open"
+                ]
+            },
+            {
+                "emoji": "📈",
+                "aliases": [
+                    "promote"
+                ]
+            },
+            {
+                "emoji": "📉",
+                "aliases": [
+                    "demote"
                 ]
             }
         ]

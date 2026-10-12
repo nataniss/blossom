@@ -4,7 +4,17 @@ const util = require('util');
 const index = require("../index.js")
 
 async function run(ctx) {
-    const { sock, from, msg, getString, text, senderNumber, prefix } = ctx;
+    const { sock, from, msg, getString, text, senderNumber, prefix, getBotAdminStatus, getAdminStatus, participants } = ctx;
+
+    const hasAll = msg?.message?.extendedTextMessage?.text?.includes("@all") ?? false;
+    const canUse = !await getProp("can_members_use_@all", false, from);
+
+    if (hasAll && canUse) {
+        if (getBotAdminStatus(sock, participants) !== null && getAdminStatus(senderNumber, participants) === null) {
+            await sock.sendMessage(from, { text: `🚫 ${getString("on_message/cant_@all")}` }, { quoted: msg })
+            await sock.sendMessage(from, { delete: msg.key })
+        }
+    }
 
     try {
         if (text.toLowerCase() === getString("prefix_message").toLowerCase()) {

@@ -1,11 +1,13 @@
 {
+    "language_code": "en",
     "language": "English",
     "bot_name": "Blossom Bot",
-    "bot_version": "1.0",
     "owner_add": "The current number (%s) the bot is connected to is not added to the owners list.\nDo you want to add this number to the owners list? (bot_config.json)",
     "owner_added": "Added.",
     "yes": "Yes",
     "no": "No",
+    "date_format": "MM/DD/YYYY",
+    "time_format": "HH:mm:ss",
     "props": "props",
     "number_format": "#%s",
     "prefix_message": "Prefix",
@@ -41,6 +43,9 @@
     "generic": {
         "incorrect_syntax": "Incorrect syntax. Check *\"%shelp %s\"* for more info.",
         "not_owner": "Only *assigned bot owners* can use this command."
+    },
+    "on_message": {
+        "cant_@all": "Group members can't send messages with *@all* in here. Only group administrators can send messages with *@all*."
     },
     "ban": {
         "ban": "Ban",
@@ -85,18 +90,41 @@
     },
     "menu": {
         "moderation": "Moderation",
+        "select_category_no_btns": "Type *%smenu <category name> to select a category and see their commands.*",
+        "select_a_category": "Select a category",
+        "select_another_category": "Other categories",
+        "other_footer": "Tap the button below to view other categories and see their commands.",
+        "footer": "Tap the button below to select categories and see their commands.",
+        "categories": "Categories list",
+        "moderation_description": "Tools for group administrators.",
         "utilities": "Utilities",
+        "utilities_description": "General, everyday tools.",
         "entertainment": "Entertainment",
+        "entertainment_description": "Tools that push group engagement.",
         "group": "Group",
+        "group_description": "Tools that give group information.",
         "downloads": "Downloads",
+        "downloads_description": "Tools that download content from external services.",
         "leveling": "Leveling",
+        "leveling_description": "Tools related to bot profiles, economy and levels.",
         "bot": "Bot",
+        "bot_description": "Tools related to the bot functionality and/or status.",
         "viewing_commands_of": "Viewing commands of category *\"%s\"*",
         "see_by": "%smenu %s",
         "categories_1": "You're viewing categories.",
         "categories_2": "To check the commands inside a category, run *\"%smenu <category name>\"*.",
         "attention_only_admins": "Only group administrators can view this category.",
-        "attention_only_owners": "Only bot owners can view this category."
+        "attention_only_owners": "Only bot owners can view this category.",
+        "group_role": "Group role",
+        "bot_name": "Bot name",
+        "bot_version": "Bot version",
+        "time": "Time",
+        "date": "Date",
+        "bot_uptime": "Bot uptime",
+        "member": "Member",
+        "admin": "Group administrator",
+        "creator": "Group creator",
+        "user": "User"
     },
     "prefix": {
         "same_prefix": "You're trying to change the prefix of the bot globally to *%s*.",
@@ -138,9 +166,13 @@
         "download_as_audio": "Download as audio...",
         "download_as_video": "Download as video...",
         "other_vids": "Other videos",
-        "enhanced_footer": "This isn't the video you want? Press \"Other videos\" below to select another one to download.",
+        "enhanced_footer": "Select a way to download below. This isn't the video you want? Press \"Other videos\" below to select another one to download.",
         "downloading": "Downloading, please wait!",
-        "no_binaries_found": "Necessary binaries were not found! To use this command, you need to install ```ffmpeg``` and ```yt-dlp```. Stop the bot, install them making sure they are in your PATH enviroment variable, and start the bot again."
+        "no_binaries_found": "Necessary binaries were not found! To use this command, you need to install ```ffmpeg``` and ```yt-dlp```. Stop the bot, install them making sure they are in your PATH enviroment variable, and start the bot again.",
+        "no_query": "No query given. You must supply a YouTube video URL or a search query.",
+        "example": "*Example:* ```%s%s %s```",
+        "example_song": "ariiol - typing",
+        "example_link": "https://youtu.be/3UJZ8CndI8Y?si=aPTSEICF4xyH2fZh"
     },
     "sticker": {
         "sticker": "Sticker",
@@ -232,5 +264,10 @@
         "not_admin": "You're not a group administrator. You can't tag everyone.",
         "tag": "Tag message sent by %s",
         "no_reason": "<no specified reason>"
+    },
+    "quote": {
+        "no_text": "Message replied has no text.",
+        "no_pfp": "User does not have a profile picture, or, if he has one, the bot can't see it. Tell the user to add the bot to their contacts list if the latter is the case.",
+        "no_message_reply": "Reply to a message, video, or image to have their text (or caption) converted into a quote!"
     }
 }
