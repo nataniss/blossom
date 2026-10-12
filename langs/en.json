@@ -42,7 +42,15 @@
     "all_done": "All done!",
     "generic": {
         "incorrect_syntax": "Incorrect syntax. Check *\"%shelp %s\"* for more info.",
+        "info": "Check *\"%shelp %s\"* for more info.",
         "not_owner": "Only *assigned bot owners* can use this command."
+    },
+    "translate": {
+        "translate": "Translate",
+        "no_text": "Message has no text.",
+        "not_valid_languages": "Language code inserted aren't valid. %s",
+        "copy_translation": "Copy translation",
+        "error_too_big": "Can't translate text with more than %s characters!"
     },
     "on_message": {
         "cant_@all": "Group members can't send messages with *@all* in here. Only group administrators can send messages with *@all*."
