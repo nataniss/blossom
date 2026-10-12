@@ -49,11 +49,15 @@
     "image_search": {
         "image_search": "Image Search",
         "next": "To get the next image of this query, type *%s*",
+        "skip_text": "To skip this error and get to the next image of this query, type *%s*",
+        "skip": "Skip error (next photo)",
         "next_photo": "Next photo",
         "results_for": "Image result *#%s/%s* of %s",
         "no_results_found": "No image results found for *%s*.",
-        "failed_to_get_results": "Failed to get image results for *%s*.",
-        "reached_end": "Reached end of image search!"
+        "failed_to_get_results": "Failed to get image results for query *%s*.",
+        "failed_to_get_image": "Failed to get image #%s for query *%s*.",
+        "reached_end": "Reached end of image search!",
+        "reached_end_error": "Can't skip due to reaching end of image search!"
     },
     "translate": {
         "translate": "Translate",
