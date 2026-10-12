@@ -26,6 +26,8 @@ let has_started = false;
 
 let profiles = {};
 
+let sessionData = {};
+
 function getAdminStatus(senderNumber, participants) {
     // senderNumber from ctx does not have @s.whatsapp at the end
     const sender = participants.find(user => user.phoneNumber === senderNumber + "@s.whatsapp.net")
@@ -719,5 +721,6 @@ module.exports = {
     loadConfig,
     profiles,
     useEnhanced,
-    getLanguage
+    getLanguage,
+    sessionData
 }

@@ -33,6 +33,7 @@
     "failed_to_run_terminal": "Failed to run command %s. Check the error stack below.",
     "failed_to_run": "Failed to run command %s.\nReason: %s\nFor a more detailed debugging, check the terminal where the bot is running!",
     "error": "Error",
+    "no_run": "JS file doesn't export run function",
     "command_not_found": "Not found",
     "loading_strings_after": "Loaded language is %s.",
     "config_make_prefix_ask": "Select a prefix for BlossomBot to use. It's recommended that you make this prefix have ONLY ONE character. E.g.: \"/\", \"!\", \";\", \"*\", \".\", etc.\nDefault is \"/\"; Press ENTER without anything written to use it.\nAfter settings up the bot, you can modify this with the /prefix command.\n >>>",
@@ -44,6 +45,15 @@
         "incorrect_syntax": "Incorrect syntax. Check *\"%shelp %s\"* for more info.",
         "info": "Check *\"%shelp %s\"* for more info.",
         "not_owner": "Only *assigned bot owners* can use this command."
+    },
+    "image_search": {
+        "image_search": "Image Search",
+        "next": "To get the next image of this query, type *%s*",
+        "next_photo": "Next photo",
+        "results_for": "Image result *#%s/%s* of %s",
+        "no_results_found": "No image results found for *%s*.",
+        "failed_to_get_results": "Failed to get image results for *%s*.",
+        "reached_end": "Reached end of image search!"
     },
     "translate": {
         "translate": "Translate",

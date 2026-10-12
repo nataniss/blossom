@@ -12,6 +12,10 @@
         {
             "file": "sticker_convert.js",
             "aliases": ["toimg", "togif", "tovid"]
+        },
+        {
+            "file": "image.js",
+            "aliases": ["image"]
         }
     ]
 }
