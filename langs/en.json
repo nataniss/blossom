@@ -194,7 +194,21 @@
         "no_query": "No query given. You must supply a YouTube video URL or a search query.",
         "example": "*Example:* ```%s%s %s```",
         "example_song": "ariiol - typing",
-        "example_link": "https://youtu.be/3UJZ8CndI8Y?si=aPTSEICF4xyH2fZh"
+        "example_link": "https://youtu.be/3UJZ8CndI8Y?si=aPTSEICF4xyH2fZh",
+        "dl_error": "Download error",
+        "generic_error": "Couldn't download video.",
+        "too_large_error": "Video is too large to send here; or the video upload failed.",
+        "link_invalid_error": "Link provided is invalid.",
+        "age_restricted_error": "Video is age restricted.",
+        "timeout_error": "Video took more than 5 minutes to download. Operation aborted.",
+        "blocked_error": "YouTube itself blocked the video download. Operation aborted.",
+        "search_error": "Search error",
+        "search_generic_error": "Couldn't search for videos.",
+        "search_timeout_error": "Video took more than 5 minutes to search. Operation aborted.",
+        "search_blocked_error": "YouTube itself blocked the video search. Operation aborted.",
+        "try_again": "Try again later.",
+        "search_link_invalid_error": "Search results given by YouTube are invalid.",
+        "search_age_restricted_error": "Search results given by YouTube are age restricted."
     },
     "sticker": {
         "sticker": "Sticker",

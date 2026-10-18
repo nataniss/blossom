@@ -48,6 +48,12 @@
                     "togif",
                     "tovid"
                 ]
+            },
+            {
+                "emoji": "🌐",
+                "aliases": [
+                    "translate"
+                ]
             }
         ]
     },
@@ -68,6 +74,12 @@
                 "aliases": [
                     "play",
                     "play_video"
+                ]
+            },
+            {
+                "emoji": "🔍",
+                "aliases": [
+                    "image"
                 ]
             }
         ]
