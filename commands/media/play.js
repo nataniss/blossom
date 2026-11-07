@@ -222,7 +222,7 @@ async function run(ctx) {
                 });
             }
         } catch (error) {
-            console.log(error)
+            
             const errorMsg = error.stderr || error.message || ''
 
             const isMediaTooLarge = errorMsg.includes('Media upload failed')
@@ -295,8 +295,6 @@ async function run(ctx) {
         }
     } catch (err) {
         const errorMsg = err.stderr || err.message || '';
-
-        console.log(err)
 
         const isLinkInvalid = errorMsg.includes('unavailable') || errorMsg.includes('Private video');
         const isAgeRestricted = errorMsg.includes('Sign in to confirm your age');

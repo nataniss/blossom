@@ -19,10 +19,23 @@ const { select, input } = require('@inquirer/prompts');
 const fsp = require('node:fs/promises');
 const chalk = require('chalk');
 const util = require('util');
+const Database = require('better-sqlite3');
 
 const GROUP_CACHE = new Map();
 
-let has_started = false;
+const db = new Database('database/blossom.db')
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS profiles (
+        chat_id TEXT,
+        user_number TEXT,
+        messages INTEGER DEFAULT 0,
+        username TEXT,
+        xp INTEGER DEFAULT 0,
+        commands INTEGER DEFAULT 0,
+        PRIMARY KEY (chat_id, user_number)
+    );
+`);
 
 let profiles = {};
 
@@ -61,72 +74,6 @@ async function getBotJid(sock, participants) {
 
     return participants.find(p => p.phoneNumber === bot_jid) ?? null
 }
-
-async function loadProfiles() {
-
-    let entries;
-    if (fs.existsSync('./database/')) {
-        entries = await fsp.readdir(`./database/`, { withFileTypes: true });
-    } else {
-        return {};
-    }
-
-    const folderNames = entries
-        .filter(entry => entry.isDirectory() && entry.name.endsWith("@g.us"))
-        .map(entry => entry.name);
-
-    for (const folder of folderNames) {
-        profiles[folder] = {};
-
-        if (await fs.existsSync(`./database/${folder}/profiles.json`)) {
-            const profile_def = JSON.parse(await fsp.readFile(`./database/${folder}/profiles.json`, { encoding: 'utf8' }));
-            profiles[folder] = profile_def;
-        } else {
-            continue
-        }
-    }
-
-    return profiles;
-}
-
-async function updateProfiles() {
-    for (const gid of Object.keys(profiles)) {
-        const dir = `./database/${gid}/`;
-        const file = `${dir}profiles.json`;
-
-        try {
-            await fsp.mkdir(dir, { recursive: true });
-
-            await fsp.writeFile(
-                file,
-                JSON.stringify(profiles[gid], null, 2),
-                { encoding: 'utf8' }
-            );
-
-        } catch (err) {
-            console.error(`Failed to save ${file}:`, err);
-        }
-    }
-}
-
-(async () => {
-    profiles = await loadProfiles();
-
-    profileLoop();
-})();
-
-function profileLoop() {
-    setTimeout(async () => {
-        try {
-            await updateProfiles();
-        } catch (err) {
-            console.error("Error saving profiles:", err);
-        }
-
-        profileLoop();
-    }, 10000);
-}
-
 
 async function getChatPrefix(from, defaultPrefix) {
     try {
@@ -639,13 +586,13 @@ async function blossom() {
             getOwnersList,
             getChatPrefix,
             getDefaultPrefix,
-            getPhoneNumberFromJid
+            getPhoneNumberFromJid,
+            db
         };
+
         ctx.getString = getString;
 
         await runMessageCommand(path.resolve("./helpers/on_message.js"), ctx);
-
-        await updateProfiles()
 
         if (!text.startsWith(activePrefix)) return;
 

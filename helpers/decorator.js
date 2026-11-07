@@ -33,7 +33,7 @@ async function decorate(info) {
             .replaceAll("[title]", info.title ?? "Title")
     );
 
-    lines.push("");
+    if (!info.no_start_padding) lines.push("");
 
     for (const body of info.content ?? []) {
 
@@ -61,43 +61,70 @@ async function decorate(info) {
                 throw new Error(`Unknown body type "${body.type}"`);
         }
     }
-    
 
-if (style.footer) {
-    lines.push("");
-    lines.push(style.footer);
-}
 
-return lines.join("\n");
+    if (style.footer) {
+        if (!info.no_end_padding) lines.push("");
+        lines.push(style.footer);
+    }
+
+    return lines.join("\n");
 }
 
 function renderBodyItem(style, item, bodyType) {
 
+    let lines = [];
+
     if (typeof item === "string") {
-        return style.body_text.replaceAll("[text]", item);
+        lines.push(
+            style.body_text.replaceAll("[text]", item)
+        );
+    } else {
+
+        switch (item.list_item_type) {
+
+            case "emoji_item":
+                lines.push(
+                    style.body_text_complex
+                        .replaceAll("[emoji]", item.emoji)
+                        .replaceAll("[text]", item.text)
+                );
+                break;
+
+            case "emoji_arrow":
+                lines.push(
+                    style.body_text_arrow_complex
+                        .replaceAll("[emoji]", item.emoji)
+                        .replaceAll("[text]", item.text)
+                );
+                break;
+
+            case "simple_arrow":
+                lines.push(
+                    style.body_text_arrow
+                        .replaceAll("[text]", item.text)
+                );
+                break;
+
+            case "simple_item":
+            default:
+                lines.push(
+                    style.body_text
+                        .replaceAll("[text]", item.text)
+                );
+                break;
+        }
+
+        const { start, end } = getPadding(item);
+
+        lines = [
+            ...Array(start).fill(style.body_empty),
+            ...lines,
+            ...Array(end).fill(style.body_empty)
+        ];
     }
 
-    switch (item.list_item_type) {
-
-        case "emoji_item":
-            return style.body_text_complex
-                .replaceAll("[emoji]", item.emoji)
-                .replaceAll("[text]", item.text);
-
-        case "emoji_arrow":
-            return style.body_text_arrow_complex
-                .replaceAll("[emoji]", item.emoji)
-                .replaceAll("[text]", item.text);
-
-        case "simple_arrow":
-            return style.body_text_arrow
-                .replaceAll("[text]", item.text);
-
-        case "simple_item":
-        default:
-            return style.body_text
-                .replaceAll("[text]", item.text);
-    }
+    return lines;
 }
 
 function pad(lines, before = 0, after = 0) {
@@ -139,7 +166,7 @@ function renderBody(style, body) {
 
     for (const item of body.items ?? []) {
         out.push(
-            renderBodyItem(style, item, body.type)
+            ...renderBodyItem(style, item, body.type)
         );
     }
 

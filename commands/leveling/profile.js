@@ -1,118 +1,147 @@
-const index = require("../../index.js")
 const { decorate } = require("../../helpers/decorator.js");
-const { getProp } = require("../../helpers/prop_mgr.js");
-const util = require('util');
+const { getProp } = require("../../helpers/prop_mgr.js")
+const { parsePhoneNumberWithError } = require("libphonenumber-js")
 
-function getGroupPosition(targetKey, obj) {
-    const sortedParticipants = Object.entries(obj).sort((a, b) => {
-        return b[1].messages - a[1].messages;
-    });
-
-    const index = sortedParticipants.findIndex(([key]) => key === targetKey);
-
-    return index === -1 ? -1 : index + 1;
+async function getUserProfilePicture(sock, jid) {
+    try {
+        const imageUrl = await sock.profilePictureUrl(jid, 'image');
+        return imageUrl;
+    } catch (error) {
+        return null;
+    }
 }
 
 async function run(ctx) {
-    const { sock, from, msg, getString, senderNumber } = ctx;
+    const { sock, from, msg, participants, senderNumber, db, getString } = ctx
 
-    const groupData = await sock.groupMetadata(from)
-    const groupName = groupData.subject || "Unknown"
+    const profileStmt = db.prepare('SELECT username, user_number, xp, messages, commands FROM profiles WHERE chat_id = ? AND user_number = ?');
+    const profileData = profileStmt.get(from, senderNumber);
 
-    const values = {
-        messages: (index.profiles[from][senderNumber].messages || 0),
-        xp: (index.profiles[from][senderNumber].xp || 0),
-        commands: (index.profiles[from][senderNumber].commands || 0),
-        currency_name: await getProp("currency", false, from),
-        currency_emoji: await getProp("currency_emoji", false, from),
-        currency_format: await getProp("currency_format"),
-        leveling: await getProp("leveling", false, from) || false,
-        points_goal: await getProp("level_points_goal", false, from),
-        group_pos: getGroupPosition(senderNumber, index.profiles[from]),
-        username: msg.pushName || "Unknown"
+    const pfp = await getUserProfilePicture(sock, senderNumber + "@s.whatsapp.net")
+    const pfp_response = await fetch((pfp) ? pfp : await getProp("quote_profile_picture_fallback", false, from));
+    const pfp_arrayBuffer = Buffer.from(await pfp_response.arrayBuffer());
+
+    let profile_information = []
+
+    profile_information.push(
+        {
+            text: `${getString("profile/number")}`,
+            list_item_type: "simple_item"
+        },
+        {
+            text: `${parsePhoneNumberWithError("+" + profileData.user_number).formatInternational()}`,
+            list_item_type: "simple_arrow",
+            padding_end: 1
+        },
+        {
+            text: `${(await getProp("leveling", false, from)) ? getString("profile/xp") : getString("profile/messages")}`,
+            list_item_type: "simple_item"
+        },
+    )
+
+    if (await getProp("leveling", false, from)) {
+        const goal = await getProp("level_points_goal", false, from);
+        const currentLevel = Math.floor(profileData.xp / goal);
+        const currentXpInLevel = profileData.xp % goal;
+        const progressPercent = (currentXpInLevel / goal) * 100;
+        const formattedPercent = progressPercent % 1 === 0 ? `${progressPercent.toFixed(0)}%` : `${progressPercent.toFixed(1)}%`;
+
+        const totalBlocks = 10;
+        let progressBar = '';
+        for (let i = 0; i < totalBlocks; i++) {
+            const blockStart = (i / totalBlocks) * 100;
+            const blockEnd = ((i + 1) / totalBlocks) * 100;
+            if (progressPercent >= blockEnd) {
+                progressBar += '█';
+            } else if (progressPercent <= blockStart) {
+                progressBar += '░';
+            } else {
+                const blockProgress = (progressPercent - blockStart) / (blockEnd - blockStart);
+                if (blockProgress <= 0.33) {
+                    progressBar += '▒';
+                } else if (blockProgress <= 0.66) {
+                    progressBar += '▓';
+                } else {
+                    progressBar += '█';
+                }
+            }
+        }
+
+        profile_information.push(
+            {
+                text: `${profileData.xp}`,
+                list_item_type: "simple_arrow",
+            },
+            {
+                text: `${getString("profile/level")}`,
+                list_item_type: "simple_item"
+            },
+            {
+                text: `${currentLevel}`,
+                list_item_type: "simple_arrow",
+            },
+            {
+                text: `${getString("profile/level_progress")} (${formattedPercent})`,
+                list_item_type: "simple_item"
+            },
+            {
+                text: `${currentLevel} › ${progressBar} › ${currentLevel + 1}`,
+                list_item_type: "simple_arrow",
+                padding_end: 1
+            },
+        )
+    } else {
+        profile_information.push(
+            {
+                text: `${profileData.messages}`,
+                list_item_type: "simple_arrow",
+                padding_end: 1
+            }
+        )
     }
 
-    let group_pos_emoji = "🏅"
+    profile_information.push(
+        {
+            text: `${getString("profile/commands")}`,
+            list_item_type: "simple_item"
+        },
+        {
+            text: `${profileData.commands}`,
+            list_item_type: "simple_arrow",
+        }
+    )
 
-    if (values.group_pos < 4) {
-        group_pos_emoji = ["🥇", "🥈", "🥉"][values.group_pos - 1]
-    }
+    const body_text = await decorate({
+        emoji: "👤",
+        no_start_padding: true,
+        title: getString("profile/profile").toLowerCase(),
+        content: [
+            {
+                type: "see_more"
+            },
+            {
+                type: "list_complex",
+                padding: 1,
+                items: profile_information
+            }
+        ]
+    })
 
     await sock.sendMessage(from, {
-        text: await decorate({
-            emoji: "👤",
-            title: getString("profile/profile").toLowerCase(),
-            content: [
-                {
-                    type: "text",
-                    padding_end: 1,
-                    items: [getString("profile/your_info")]
-                },
-                {
-                    type: "list_complex",
-                    padding: 1,
-                    items: [
-                        {
-                            emoji: "🏷️",
-                            text: `*${getString("profile/name")}:* ${values.username}`,
-                            list_item_type: "emoji_item"
-                        },
-                    ]
-                },
-                {
-                    type: "text",
-                    padding: 1,
-                    items: [util.format(getString("profile/data_of_group"), groupName)]
-                },
-                {
-                    type: "list_complex",
-                    padding: 1,
-                    items: [
-                        {
-                            emoji: "⭐",
-                            text: `*${getString("profile/xp")}:* ${values.leveling ? values.xp : getString("profile/leveling_off")}`,
-                            list_item_type: "emoji_item"
-                        },
-                        {
-                            emoji: '🏆',
-                            text: `*${getString("profile/level")}:* ${values.leveling ? Math.floor(values.xp / values.points_goal) : getString("profile/leveling_off")}`,
-                            list_item_type: "emoji_item"
-                        },
-                        {
-                            emoji: group_pos_emoji,
-                            text: `*${getString("profile/group_rank")}:* ${values.leveling ? util.format(getString("number_format"), values.group_pos) : getString("profile/leveling_off")}`,
-                            list_item_type: "emoji_item"
-                        },
-                        {
-                            emoji: "💬",
-                            text: `*${getString("profile/messages")}:* ${values.messages}`,
-                            list_item_type: "emoji_item"
-                        },
-                        {
-                            emoji: "🔌",
-                            text: `*${getString("profile/commands")}:* ${values.commands}`,
-                            list_item_type: "emoji_item"
-                        }
-                    ]
-                },
-                {
-                    type: "text",
-                    padding: 1,
-                    items: [getString("profile/data_of_all_groups")]
-                },
-                {
-                    type: "list_complex",
-                    padding: 1,
-                    items: [
-                        {
-                            emoji: values.currency_emoji,
-                            text: `*${values.currency_name[0].toUpperCase() + values.currency_name.slice(1)}:* ${util.format(values.currency_format, -1)}`,
-                            list_item_type: "emoji_item"
-                        }
-                    ]
-                }]
-        })
-    }, { quoted: msg })
+        text: body_text,
+        contextInfo: {
+            externalAdReply: {
+                title: profileData.username,
+                body: await getProp("bot_name", false, from),
+                mediaType: 2,
+                thumbnail: pfp_arrayBuffer,
+                mediaUrl: await getProp("bot_url", false, from),
+                sourceUrl: await getProp("bot_url", false, from)
+            }
+        }
+    },
+        { quoted: msg }
+    )
 }
 
 module.exports = { run }

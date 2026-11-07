@@ -19,6 +19,15 @@
         "type": "string",
         "fallback": "𝓫𝓵𝓸𝓼𝓼𝓸𝓶ᵇᵒᵗ"
     },
+    "bot_name_not_styled": {
+        "type": "string",
+        "fallback": "BlossomBot"
+    },
+    "bot_url": {
+        "type": "string",
+        "regex": "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,63}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$",
+        "fallback": "https://github.com/nataniss/blossom"
+    },
     "bot_version": {
         "type": "string",
         "fallback": "1.0"
@@ -38,6 +47,7 @@
     },
     "max_rank_entries": {
         "type": "number",
+        "regex": "^(?:-1|\\d+(?:\\.\\d+)?)$",
         "fallback": 10
     },
     "level_points_goal": {

@@ -1,146 +1,108 @@
-const index = require("../../index.js")
-const { decorate } = require("../../helpers/decorator.js");
-const { getProp } = require("../../helpers/prop_mgr.js");
-const util = require('util');
+const { getProp } = require("../../helpers/prop_mgr.js")
+const { decorate } = require("../../helpers/decorator.js")
 
-function getRankName(rank, getString) {
-    switch (rank) {
-        case ("xp"):
-            return getString("rank/ranking_xp")
-        case ("desc:xp"):
-            return getString("rank/ranking_desc_xp")
+function getOrdinalString(index, getString) {
+    const remainder100 = index % 100;
+    if (remainder100 >= 11 && remainder100 <= 13) {
+        return `${index}${getString("other")}`;
     }
+
+    const remainder10 = index % 10;
+    const suffixes = {
+        1: getString("first"),
+        2: getString("second"),
+        3: getString("third")
+    };
+
+    return `${index}${suffixes[remainder10] || getString("other")}`;
 }
 
-async function getContent(ctx) {
-    const { from, getString, args } = ctx;
-
-    let content = [];
-
-    if (!await getProp("leveling", false, from)) {
-        content.push({
-            type: "list_complex",
-            padding: 1,
-            items: [
-                {
-                    type: "simple_item",
-                    text: getString("rank/leveling_off")
-                }
-            ]
-        });
-
-        return content
-    }
-
-    const profiles = index?.profiles?.[from];
-    if (!profiles) {
-        return [];
-    }
-
-    let entries = Object.entries(profiles)
-        .map(([key, data]) => ({
-            id: key,
-            xp: data.xp ?? 0,
-            username: data.username ?? key
-        }))
-        .filter(user => user.xp > 0);
-
-    const isDescXp = args && args[0] === "desc:xp";
-
-    entries.sort((a, b) => {
-        if (isDescXp) {
-            return a.xp - b.xp;
-        } else {
-            return b.xp - a.xp;
-        }
-    });
-
-    const max_entries = await getProp("max_rank_entries", false, from) || 10;
-
-    entries = entries.slice(0, max_entries);
-
-    const values = {
-        points_goal: await getProp("level_points_goal", false, from)
-    }
-
-    content.push({
-        type: "text",
-        items: [`*${getRankName(args[0], getString)}*`]
-    });
-
-    content.push({
-        type: "see_more",
-        padding: 1
-    });
-
-    let listItems = [];
-
-    entries.forEach((user, indexNumber) => {
-        const position = indexNumber + 1;
-
-        let emoji = "🏅";
-        if (position === 1) emoji = "🥇";
-        else if (position === 2) emoji = "🥈";
-        else if (position === 3) emoji = "🥉";
-
-        const formattedPosition = util.format(getString("number_format"), position);
-        const titleText = `*${formattedPosition}:* ${user.username}`;
-
-        const xpLabel = getString("rank/xp");
-        const xpText = `*${xpLabel}*: ${user.xp}`;
-
-        const levelLabel = getString("rank/level")
-        const levelText = `*${levelLabel}: ${Math.round(user.xp / values.points_goal)}*`
-
-        listItems.push({
-            emoji: emoji,
-            text: `${titleText}`,
-            list_item_type: "emoji_item"
-        });
-
-        listItems.push({
-            emoji: "⭐",
-            text: xpText,
-            list_item_type: "emoji_arrow"
-        });
-
-        listItems.push({
-            emoji: "🏆",
-            text: levelText,
-            list_item_type: "emoji_arrow"
-        });
-    });
-
-    content.push({
-        type: "list_complex",
-        items: listItems
-    });
-
-    return content;
-}
 
 async function run(ctx) {
-    const { sock, from, msg, getString, args, prefix, cmd } = ctx;
+    const { sock, from, msg, db, getString } = ctx
 
-    const availableRankTypes = ["xp", "desc:xp"]
-
-    if (args.length !== 1 || !availableRankTypes.includes(args[0])) {
+    if (!await getProp("leveling", false, from)) {
         return await sock.sendMessage(from, {
             text: await decorate({
                 emoji: "📊",
                 title: getString("rank/rank").toLowerCase(),
-                content: [{ type: "text", items: [util.format(getString("generic/incorrect_syntax"), prefix, cmd)] }]
+                content: [
+                    {
+                        type: "list_complex",
+                        padding: 1,
+                        items: [
+                            {
+                                text: `${getString("rank/leveling_off")}`,
+                                list_item_type: "simple_item"
+                            }
+                        ]
+                    }
+                ]
             })
-        }, { quoted: msg });
+        }, { quoted: msg })
+    }
+
+    const rankStmt = db.prepare(`
+        SELECT * FROM profiles
+        WHERE chat_id = ? 
+        ORDER BY xp DESC
+    `)
+
+    let rankResults = rankStmt.all(from)
+
+    const maxEntries = await getProp("max_rank_entries", false, from)
+
+    if (typeof maxEntries === "number" && maxEntries > 0) {
+        rankResults = rankResults.slice(0, maxEntries)
+    }
+
+    let rankBody = []
+
+    const goal = await getProp("level_points_goal", false, from);
+
+    let index = 0
+
+    for (const entry of rankResults) {
+        if (entry.xp === 0) continue
+
+        index = index + 1
+        
+        rankBody.push(
+            {
+                text: `*${getOrdinalString(index, getString)} ${getString("rank/place")}: ${entry.username}*`,
+                list_item_type: "simple_item"
+            },
+            {
+                text: `*${getString("rank/xp")}:* ${entry.xp}`,
+                list_item_type: "simple_arrow",
+            },
+            {
+                text: `*${getString("rank/level")}:* ${Math.floor(entry.xp / goal)}`,
+                list_item_type: "simple_arrow",
+                padding_end: 1
+            },
+        )
     }
 
     await sock.sendMessage(from, {
-        text: await decorate({
-            emoji: "📊",
-            title: getString("rank/rank").toLowerCase(),
-            content: await getContent(ctx)
-        })
-    }, { quoted: msg });
+        text: await decorate(
+            {
+                emoji: "📊",
+                no_start_padding: true,
+                title: getString("rank/rank").toLowerCase(),
+                content: [
+                    {
+                        type: "see_more"
+                    },
+                    {
+                        type: "list_complex",
+                        padding_start: 1,
+                        items: rankBody
+                    }
+                ]
+            }
+        )
+    }, { quoted: msg })
 }
 
 module.exports = { run }

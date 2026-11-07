@@ -1,5 +1,4 @@
 const { createCanvas, loadImage, registerFont } = require('canvas')
-const { profiles } = require('../../index')
 const sharp = require('sharp');
 const {
     getProp
@@ -205,8 +204,7 @@ async function makeQuoteImageBuffer(info) {
 }
 
 async function run(ctx) {
-
-    const { sock, msg, participants, from, getString } = ctx
+    const { sock, msg, participants, from, getString, db } = ctx
 
     const canvas = createCanvas(1024, 384)
     const canvas_ctx = canvas.getContext('2d')
@@ -230,7 +228,11 @@ async function run(ctx) {
             const quotedPerson = participants.find(user => user.id === quotedPersonJid)
             const quotedPersonPN = quotedPerson.phoneNumber.replace('@s.whatsapp.net', '')
 
-            const username = profiles[from][quotedPersonPN].username
+            const profileStmt = db.prepare('SELECT username FROM profiles WHERE chat_id = ? AND user_number = ?');
+            const profileData = profileStmt.get(from, quotedPersonPN);
+
+            const username = profileData ? profileData.username : (quotedPerson.pushName || '?');
+            
             const pfp = await getUserProfilePicture(sock, quotedPerson.phoneNumber)
 
             if (quotedText == "") {
