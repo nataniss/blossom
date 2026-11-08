@@ -65,9 +65,13 @@ async function run(ctx) {
             if (await getProp("level_up_message", false, from) && Math.floor(previous_xp / points_goal) !== Math.floor(current_xp / points_goal)) {
                 await sock.sendMessage(from, {
                     text: await decorate({
+                        no_start_padding: true,
                         emoji: "🌟",
                         title: getString("level_up/level_up").toLowerCase(),
                         content: [
+                            {
+                                type: "see_more"
+                            },
                             {
                                 type: "text",
                                 padding_end: 1,

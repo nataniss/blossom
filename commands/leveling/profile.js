@@ -25,6 +25,14 @@ async function run(ctx) {
 
     profile_information.push(
         {
+            text: `${getString("profile/name")}`,
+            list_item_type: "simple_item"
+        },
+        {
+            text: `${profileData.username}`,
+            list_item_type: "simple_arrow",
+        },
+        {
             text: `${getString("profile/number")}`,
             list_item_type: "simple_item"
         },
@@ -127,21 +135,8 @@ async function run(ctx) {
         ]
     })
 
-    await sock.sendMessage(from, {
-        text: body_text,
-        contextInfo: {
-            externalAdReply: {
-                title: profileData.username,
-                body: await getProp("bot_name", false, from),
-                mediaType: 2,
-                thumbnail: pfp_arrayBuffer,
-                mediaUrl: await getProp("bot_url", false, from),
-                sourceUrl: await getProp("bot_url", false, from)
-            }
-        }
-    },
-        { quoted: msg }
-    )
+    await sock.sendMessage(from, { image: pfp_arrayBuffer, caption: body_text }, { quoted: msg })
+
 }
 
 module.exports = { run }
